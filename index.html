@@ -1,0 +1,3023 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<meta name="api-base-url" content="">
+<title>AutoSender Pro · Command Center v4.3</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --p-50:#EEF2FF;--p-100:#E0E7FF;--p-200:#C7D2FE;--p-300:#A5B4FC;
+  --p-400:#818CF8;--p-500:#6366F1;--p-600:#4F46E5;--p-700:#4338CA;
+  --p-800:#3730A3;--p-900:#1E1B4B;--p-950:#0F0D2E;
+  --ok:#10B981;--ok-soft:#D1FAE5;
+  --warn:#F59E0B;--warn-soft:#FEF3C7;
+  --bad:#F43F5E;--bad-soft:#FFE4E6;
+  --ink:#0B1021;--ink-2:#1E293B;--ink-3:#334155;
+  --muted:#64748B;--muted-2:#94A3B8;
+  --bg:#F6F8FE;--card:#FFFFFF;
+  --line:rgba(15,23,42,.08);--line-2:rgba(15,23,42,.14);
+  --sh-sm:0 1px 3px rgba(15,23,42,.05);
+  --sh-md:0 8px 24px -10px rgba(30,27,75,.18);
+  --sh-lg:0 24px 50px -20px rgba(30,27,75,.3);
+  --sh-xl:0 40px 80px -30px rgba(30,27,75,.4);
+}
+[data-theme="dark"]{
+  --bg:#080B18;--card:#0F1525;
+  --ink:#F1F5F9;--ink-2:#E2E8F0;--ink-3:#CBD5E1;
+  --muted:#94A3B8;--muted-2:#64748B;
+  --line:rgba(255,255,255,.08);--line-2:rgba(255,255,255,.14);
+  --sh-sm:0 1px 3px rgba(0,0,0,.4);
+  --sh-md:0 8px 24px -10px rgba(0,0,0,.5);
+  --sh-lg:0 24px 50px -20px rgba(0,0,0,.6);
+  --sh-xl:0 40px 80px -30px rgba(0,0,0,.7);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{scroll-behavior:smooth}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);
+  min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden;transition:background .3s,color .3s;}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(1100px 700px at 5% -10%, rgba(99,102,241,.14), transparent 55%),
+    radial-gradient(900px 600px at 100% 5%, rgba(139,92,246,.12), transparent 55%),
+    radial-gradient(900px 800px at 50% 120%, rgba(6,182,212,.08), transparent 60%);}
+[data-theme="dark"] body::before{background:radial-gradient(1100px 700px at 5% -10%, rgba(99,102,241,.22), transparent 55%),
+    radial-gradient(900px 600px at 100% 5%, rgba(139,92,246,.16), transparent 55%),
+    radial-gradient(900px 800px at 50% 120%, rgba(6,182,212,.12), transparent 60%);}
+::selection{background:var(--p-500);color:#fff}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(99,102,241,.28);border-radius:20px;border:3px solid transparent;background-clip:content-box}
+::-webkit-scrollbar-thumb:hover{background:rgba(99,102,241,.5);background-clip:content-box}
+.mono{font-family:'JetBrains Mono',monospace}
+.gradient-text{background:linear-gradient(135deg,#6366F1 0%,#8B5CF6 50%,#06B6D4 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;}
+#login-overlay{position:fixed;inset:0;z-index:1000;display:flex;background:#07091A}
+.login-art{position:relative;flex:1.1;display:none;overflow:hidden;
+  background:radial-gradient(800px 600px at 15% 25%, rgba(99,102,241,.5), transparent 60%),
+    radial-gradient(700px 700px at 90% 85%, rgba(139,92,246,.35), transparent 60%),
+    radial-gradient(600px 600px at 50% 100%, rgba(6,182,212,.25), transparent 60%),
+    linear-gradient(150deg,#07091A 0%,#141B45 50%,#2A1F6B 100%);}
+@media(min-width:1024px){.login-art{display:block}}
+.login-art .grid-lines{position:absolute;inset:0;opacity:.3;
+  background-image:linear-gradient(rgba(255,255,255,.08) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.08) 1px,transparent 1px);
+  background-size:56px 56px;
+  mask-image:radial-gradient(circle at 35% 45%, #000 0%, transparent 78%);
+  -webkit-mask-image:radial-gradient(circle at 35% 45%, #000 0%, transparent 78%);}
+.orb{position:absolute;border-radius:50%;filter:blur(80px);opacity:.5;animation:drift 20s ease-in-out infinite}
+.orb.a{width:480px;height:480px;background:#6366F1;top:-120px;left:-90px}
+.orb.b{width:380px;height:380px;background:#06B6D4;bottom:-100px;right:6%;animation-delay:-7s;opacity:.35}
+.orb.c{width:300px;height:300px;background:#8B5CF6;top:48%;right:32%;animation-delay:-13s;opacity:.3}
+@keyframes drift{0%,100%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(36px,-46px,0) scale(1.14)}}
+.login-form-wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:1.5rem;background:var(--bg);position:relative;transition:background .3s}
+@media(min-width:1024px){.login-form-wrap{flex:0 0 540px;background:linear-gradient(180deg,var(--card) 0%,var(--bg) 100%)}}
+.login-card{width:100%;max-width:430px;animation:rise .8s cubic-bezier(.16,1,.3,1) both}
+@keyframes rise{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+.field{width:100%;background:var(--card);border:1.5px solid var(--line-2);border-radius:15px;
+  padding:1rem 1.15rem 1rem 3rem;font-size:.92rem;font-weight:600;color:var(--ink);
+  outline:none;transition:.22s cubic-bezier(.2,.9,.3,1);}
+.field::placeholder{color:var(--muted-2);font-weight:600}
+.field:focus{border-color:var(--p-500);box-shadow:0 0 0 4px rgba(99,102,241,.15)}
+.field-icon{position:absolute;left:1.05rem;top:50%;transform:translateY(-50%);color:var(--muted-2);pointer-events:none}
+.btn-primary{position:relative;overflow:hidden;width:100%;
+  background:linear-gradient(135deg,#6366F1,#8B5CF6 55%,#06B6D4);
+  color:#fff;font-weight:800;font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;
+  padding:1.1rem;border-radius:15px;border:none;cursor:pointer;
+  box-shadow:0 20px 40px -14px rgba(99,102,241,.8);
+  transition:.22s cubic-bezier(.2,.9,.3,1);}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 28px 50px -14px rgba(99,102,241,.9)}
+.btn-primary:active{transform:translateY(0) scale(.985)}
+.btn-primary[disabled]{opacity:.6;cursor:not-allowed;transform:none}
+#app{position:relative;z-index:1}
+.sidebar{position:fixed;inset:0 auto 0 0;width:280px;z-index:60;
+  background:rgba(255,255,255,.85);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border-right:1px solid var(--line);display:flex;flex-direction:column;
+  transform:translateX(-100%);transition:transform .38s cubic-bezier(.16,1,.3,1);}
+[data-theme="dark"] .sidebar{background:rgba(15,21,37,.85)}
+.sidebar.open{transform:none;box-shadow:var(--sh-xl)}
+@media(min-width:1024px){.sidebar{transform:none}}
+.sidebar-scrim{position:fixed;inset:0;background:rgba(7,9,26,.5);backdrop-filter:blur(4px);z-index:55;opacity:0;pointer-events:none;transition:opacity .3s}
+.sidebar-scrim.show{opacity:1;pointer-events:auto}
+@media(min-width:1024px){.sidebar-scrim{display:none}}
+.app-main{transition:padding .3s}
+@media(min-width:1024px){.app-main{padding-left:280px}}
+.nav-item{position:relative;display:flex;align-items:center;gap:.85rem;width:100%;
+  padding:.8rem .95rem;border-radius:14px;border:none;background:transparent;cursor:pointer;
+  font-weight:700;font-size:.86rem;color:var(--muted);text-align:left;
+  transition:.22s cubic-bezier(.2,.9,.3,1);}
+.nav-item:hover{background:rgba(99,102,241,.07);color:var(--p-700)}
+[data-theme="dark"] .nav-item:hover{background:rgba(99,102,241,.14);color:var(--p-300)}
+.nav-item.active{background:linear-gradient(135deg,#4F46E5,#6366F1 50%,#8B5CF6);color:#fff;box-shadow:0 14px 28px -12px rgba(99,102,241,.9);}
+.nav-item.active .nav-ico{background:rgba(255,255,255,.2);color:#fff}
+.nav-ico{width:36px;height:36px;flex:0 0 36px;border-radius:11px;display:grid;place-items:center;
+  background:rgba(99,102,241,.08);color:var(--p-600);font-size:.95rem;transition:.22s;}
+.nav-item .badge{margin-left:auto;font-size:.65rem;font-weight:800;padding:.22rem .55rem;border-radius:999px;
+  background:rgba(99,102,241,.1);color:var(--p-700);min-width:26px;text-align:center;}
+.nav-item.active .badge{background:rgba(255,255,255,.25);color:#fff}
+.topbar{position:sticky;top:0;z-index:40;
+  background:rgba(255,255,255,.82);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--line);}
+[data-theme="dark"] .topbar{background:rgba(15,21,37,.82)}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:22px;
+  box-shadow:var(--sh-md);transition:box-shadow .3s,border-color .3s;}
+.kpi{position:relative;overflow:hidden;background:var(--card);border:1px solid var(--line);
+  border-radius:22px;padding:1.4rem 1.4rem 1.3rem;box-shadow:var(--sh-md);
+  transition:transform .4s cubic-bezier(.16,1,.3,1),box-shadow .4s;}
+.kpi:hover{transform:translateY(-6px);box-shadow:var(--sh-lg)}
+.kpi::before{content:'';position:absolute;inset:0 auto 0 0;width:5px;background:linear-gradient(180deg,var(--k,var(--p-600)),transparent);}
+.kpi::after{content:'';position:absolute;right:-50px;top:-50px;width:170px;height:170px;border-radius:50%;
+  background:var(--k,var(--p-600));opacity:.06;transition:.5s;}
+.kpi:hover::after{transform:scale(1.4);opacity:.1}
+.kpi-ico{width:46px;height:46px;border-radius:15px;display:grid;place-items:center;font-size:1.15rem;
+  background:color-mix(in srgb,var(--k,var(--p-600)) 14%, transparent);color:var(--k,var(--p-600));}
+.kpi-val{font-size:2.7rem;line-height:1;font-weight:800;letter-spacing:-.05em;color:var(--ink)}
+.spark{width:100%;height:36px;margin-top:.75rem}
+.spark path{fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.chip{display:inline-flex;align-items:center;gap:.45rem;padding:.5rem 1rem;border-radius:999px;
+  border:1.5px solid var(--line-2);background:var(--card);font-size:.72rem;font-weight:800;color:var(--muted);
+  cursor:pointer;transition:.22s cubic-bezier(.2,.9,.3,1);white-space:nowrap;}
+.chip:hover{border-color:var(--p-400);color:var(--p-700);transform:translateY(-1px)}
+.chip.active{background:linear-gradient(135deg,#4F46E5,#6366F1 50%,#8B5CF6);border-color:transparent;color:#fff;box-shadow:0 12px 24px -10px rgba(99,102,241,.9)}
+.chip .cnt{font-size:.65rem;opacity:.75;background:rgba(0,0,0,.06);padding:.05rem .42rem;border-radius:999px;min-width:22px;text-align:center}
+.chip.active .cnt{background:rgba(255,255,255,.25);opacity:1}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.45rem;
+  font-weight:800;font-size:.72rem;letter-spacing:.04em;padding:.72rem 1.05rem;border-radius:13px;
+  border:1.5px solid transparent;cursor:pointer;transition:.2s cubic-bezier(.2,.9,.3,1);white-space:nowrap;}
+.btn:active{transform:scale(.965)}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none!important}
+.btn-dark{background:var(--ink);color:#fff}
+.btn-dark:hover{background:var(--ink-2);box-shadow:0 12px 22px -12px rgba(11,16,33,.9)}
+.btn-royal{background:linear-gradient(135deg,#4F46E5,#6366F1 50%,#8B5CF6);color:#fff}
+.btn-royal:hover{box-shadow:0 14px 28px -12px rgba(99,102,241,1);transform:translateY(-1px)}
+.btn-warn{background:#FEF3C7;color:#B45309;border-color:#FDE68A}
+.btn-warn:hover{background:#FDE68A}
+[data-theme="dark"] .btn-warn{background:rgba(245,158,11,.15);color:#FCD34D;border-color:rgba(245,158,11,.3)}
+.btn-danger{background:#FFE4E6;color:#BE123C;border-color:#FECDD3}
+.btn-danger:hover{background:#FECDD3}
+[data-theme="dark"] .btn-danger{background:rgba(244,63,94,.15);color:#FDA4AF;border-color:rgba(244,63,94,.3)}
+.btn-ghost{background:var(--card);color:var(--muted);border-color:var(--line-2)}
+.btn-ghost:hover{border-color:var(--p-400);color:var(--p-700);background:var(--p-50)}
+[data-theme="dark"] .btn-ghost:hover{background:rgba(99,102,241,.14);color:var(--p-300)}
+.btn-ok{background:linear-gradient(135deg,#059669,#10B981);color:#fff}
+.btn-ok:hover{box-shadow:0 14px 28px -12px rgba(16,185,129,1)}
+.icon-btn{width:40px;height:40px;border-radius:13px;display:grid;place-items:center;
+  border:1.5px solid var(--line-2);background:var(--card);color:var(--muted);cursor:pointer;
+  transition:.2s cubic-bezier(.2,.9,.3,1);position:relative;}
+.icon-btn:hover{border-color:var(--p-400);color:var(--p-700);background:var(--p-50);transform:translateY(-1px)}
+[data-theme="dark"] .icon-btn:hover{background:rgba(99,102,241,.14);color:var(--p-300)}
+.icon-btn .dot-badge{position:absolute;top:-3px;right:-3px;min-width:18px;height:18px;padding:0 4px;
+  border-radius:999px;background:linear-gradient(135deg,#F43F5E,#EC4899);color:#fff;
+  font-size:9px;font-weight:800;display:grid;place-items:center;border:2px solid var(--bg);}
+.ucard{position:relative;background:var(--card);border:1.5px solid var(--line);
+  border-radius:22px;padding:1.35rem;box-shadow:var(--sh-sm);cursor:pointer;
+  transition:.32s cubic-bezier(.16,1,.3,1);display:flex;flex-direction:column;
+  animation:cardIn .5s cubic-bezier(.16,1,.3,1) both;}
+@keyframes cardIn{from{opacity:0;transform:translateY(16px) scale(.98)}to{opacity:1;transform:none}}
+.ucard:hover{transform:translateY(-6px);border-color:rgba(99,102,241,.4);box-shadow:var(--sh-lg)}
+.ucard.is-selected{border-color:var(--p-500);box-shadow:0 0 0 3px rgba(99,102,241,.16),var(--sh-lg)}
+.ucard.urgent{background:linear-gradient(180deg,rgba(220,38,38,.03),transparent 40%);border-color:rgba(220,38,38,.28);}
+.ucard.urgent::before{content:'';position:absolute;top:12px;right:12px;width:10px;height:10px;border-radius:50%;
+  background:var(--bad);box-shadow:0 0 0 5px rgba(244,63,94,.18);animation:blink 1.6s ease-in-out infinite;}
+.ucard.pending{opacity:.7;pointer-events:none}
+.ucard.pending::after{content:'';position:absolute;inset:0;border-radius:inherit;
+  background:linear-gradient(90deg,transparent,rgba(99,102,241,.15),transparent);
+  background-size:200% 100%;animation:shimmer 1.2s linear infinite;}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+@keyframes blink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.85)}}
+.avatar{width:58px;height:58px;border-radius:19px;display:grid;place-items:center;flex:0 0 58px;
+  font-weight:800;font-size:1.05rem;letter-spacing:-.02em;color:#fff;
+  background:linear-gradient(135deg,#4F46E5,#8B5CF6);
+  box-shadow:0 14px 26px -12px rgba(99,102,241,.9);position:relative;overflow:hidden;}
+.avatar::after{content:'';position:absolute;inset:0;background:linear-gradient(140deg,rgba(255,255,255,.35),transparent 55%)}
+.avatar.susp{background:linear-gradient(135deg,#B45309,#F59E0B);box-shadow:0 14px 26px -12px rgba(245,158,11,.85)}
+.avatar.exp{background:linear-gradient(135deg,#9F1239,#F43F5E);box-shadow:0 14px 26px -12px rgba(244,63,94,.8)}
+.avatar.unk{background:linear-gradient(135deg,#475569,#94A3B8);box-shadow:0 14px 26px -12px rgba(71,85,105,.7)}
+.avatar.crit{background:linear-gradient(135deg,#DC2626,#F87171);box-shadow:0 14px 26px -12px rgba(220,38,38,.9)}
+.pill{display:inline-flex;align-items:center;gap:.4rem;padding:.36rem .72rem;border-radius:999px;
+  font-size:.66rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;
+  border:1.5px solid transparent;white-space:nowrap;}
+.pill .dot{width:6px;height:6px;border-radius:50%;background:currentColor}
+.pill.ok{background:#D1FAE5;color:#047857;border-color:#A7F3D0}
+.pill.warn{background:#FEF3C7;color:#B45309;border-color:#FDE68A}
+.pill.bad{background:#FFE4E6;color:#BE123C;border-color:#FECDD3}
+.pill.crit{background:#FEE2E2;color:#B91C1C;border-color:#FCA5A5}
+.pill.unk{background:#F1F5F9;color:#64748B;border-color:#E2E8F0}
+[data-theme="dark"] .pill.ok{background:rgba(16,185,129,.18);color:#6EE7B7;border-color:rgba(16,185,129,.35)}
+[data-theme="dark"] .pill.warn{background:rgba(245,158,11,.18);color:#FCD34D;border-color:rgba(245,158,11,.35)}
+[data-theme="dark"] .pill.bad{background:rgba(244,63,94,.18);color:#FDA4AF;border-color:rgba(244,63,94,.35)}
+[data-theme="dark"] .pill.crit{background:rgba(220,38,38,.22);color:#FCA5A5;border-color:rgba(220,38,38,.4)}
+[data-theme="dark"] .pill.unk{background:rgba(100,116,139,.2);color:#CBD5E1;border-color:rgba(100,116,139,.35)}
+.check{width:22px;height:22px;border-radius:8px;border:1.8px solid var(--line-2);background:var(--card);
+  display:grid;place-items:center;cursor:pointer;transition:.18s;flex:0 0 22px;}
+.check:hover{border-color:var(--p-500)}
+.check.on{background:var(--p-600);border-color:var(--p-600)}
+.check.on::after{content:'';width:10px;height:6px;border-left:2.2px solid #fff;border-bottom:2.2px solid #fff;transform:rotate(-45deg) translateY(-1px)}
+.ring{position:relative;width:52px;height:52px;border-radius:50%;display:grid;place-items:center;flex:0 0 52px;
+  background:conic-gradient(var(--c,#10B981) calc(var(--p,0) * 1%), var(--line-2) 0);transition:background .8s}
+.ring::after{content:'';position:absolute;inset:5px;border-radius:50%;background:var(--card)}
+.ring span{position:relative;z-index:1;font-size:.66rem;font-weight:800;color:var(--ink);letter-spacing:-.03em}
+.note-pill{display:inline-flex;align-items:center;gap:.35rem;padding:.28rem .6rem;border-radius:8px;
+  background:rgba(251,191,36,.15);color:#B45309;font-size:.66rem;font-weight:800;
+  border:1px solid rgba(251,191,36,.35);max-width:100%;}
+[data-theme="dark"] .note-pill{background:rgba(251,191,36,.12);color:#FCD34D;border-color:rgba(251,191,36,.3)}
+
+/* Quick-add day chips */
+.qadd-label{display:flex;align-items:center;justify-content:space-between;margin-bottom:.35rem;
+  font-size:9.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted-2);}
+.qadd-row{display:grid;grid-template-columns:repeat(6,1fr);gap:.3rem;margin-bottom:.65rem}
+.qadd-btn{position:relative;padding:.45rem .15rem;border-radius:9px;background:var(--p-50);
+  border:1.5px solid var(--line-2);font-size:10.5px;font-weight:800;color:var(--p-700);
+  cursor:pointer;transition:.15s cubic-bezier(.16,1,.3,1);text-align:center;
+  font-family:'JetBrains Mono',monospace;letter-spacing:-.02em;line-height:1;white-space:nowrap;}
+.qadd-btn:hover{background:linear-gradient(135deg,#4F46E5,#8B5CF6);color:#fff;border-color:transparent;
+  transform:translateY(-1.5px);box-shadow:0 8px 16px -8px rgba(99,102,241,.95);}
+.qadd-btn:active{transform:translateY(0) scale(.94)}
+.qadd-btn.custom{background:rgba(251,191,36,.16);color:#B45309;border-color:rgba(251,191,36,.4);font-family:'Plus Jakarta Sans',sans-serif;}
+.qadd-btn.custom:hover{background:linear-gradient(135deg,#F59E0B,#FBBF24);color:#fff;border-color:transparent;box-shadow:0 8px 16px -8px rgba(245,158,11,.95);}
+[data-theme="dark"] .qadd-btn{background:rgba(99,102,241,.1);color:var(--p-300);border-color:rgba(99,102,241,.22)}
+[data-theme="dark"] .qadd-btn.custom{background:rgba(251,191,36,.12);color:#FCD34D;border-color:rgba(251,191,36,.32)}
+[data-theme="dark"] .qadd-btn:hover{background:linear-gradient(135deg,#4F46E5,#8B5CF6);color:#fff;border-color:transparent}
+[data-theme="dark"] .qadd-btn.custom:hover{background:linear-gradient(135deg,#F59E0B,#FBBF24);color:#fff;border-color:transparent}
+.qadd-row-lg{display:grid;grid-template-columns:repeat(8,1fr);gap:.4rem}
+.qadd-btn-lg{padding:.6rem .15rem;border-radius:11px;background:var(--p-50);
+  border:1.5px solid var(--line-2);font-size:11px;font-weight:800;color:var(--p-700);
+  cursor:pointer;transition:.15s cubic-bezier(.16,1,.3,1);text-align:center;
+  font-family:'JetBrains Mono',monospace;letter-spacing:-.02em;line-height:1;}
+.qadd-btn-lg:hover{background:linear-gradient(135deg,#4F46E5,#8B5CF6);color:#fff;border-color:transparent;transform:translateY(-1.5px);box-shadow:0 8px 16px -8px rgba(99,102,241,.95)}
+.qadd-btn-lg:active{transform:translateY(0) scale(.94)}
+.qadd-btn-lg.custom{background:rgba(251,191,36,.16);color:#B45309;border-color:rgba(251,191,36,.4);font-family:'Plus Jakarta Sans',sans-serif}
+.qadd-btn-lg.custom:hover{background:linear-gradient(135deg,#F59E0B,#FBBF24);color:#fff;border-color:transparent}
+[data-theme="dark"] .qadd-btn-lg{background:rgba(99,102,241,.1);color:var(--p-300);border-color:rgba(99,102,241,.22)}
+[data-theme="dark"] .qadd-btn-lg.custom{background:rgba(251,191,36,.12);color:#FCD34D;border-color:rgba(251,191,36,.32)}
+[data-theme="dark"] .qadd-btn-lg:hover{background:linear-gradient(135deg,#4F46E5,#8B5CF6);color:#fff}
+[data-theme="dark"] .qadd-btn-lg.custom:hover{background:linear-gradient(135deg,#F59E0B,#FBBF24);color:#fff}
+
+.prompt-input{width:100%;background:var(--p-50);border:2px solid var(--line-2);
+  border-radius:16px;padding:1rem 1.15rem;font-size:1.4rem;font-weight:800;color:var(--ink);
+  text-align:center;outline:none;transition:.2s;font-family:'JetBrains Mono',monospace;letter-spacing:-.02em;}
+.prompt-input:focus{border-color:var(--p-500);box-shadow:0 0 0 4px rgba(99,102,241,.15);background:var(--card)}
+.prompt-presets{display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;margin-top:1rem}
+.prompt-preset{padding:.75rem .5rem;border-radius:12px;background:var(--p-50);
+  border:1.5px solid var(--line-2);font-weight:800;font-size:.78rem;color:var(--p-700);
+  cursor:pointer;transition:.15s;text-align:center;}
+.prompt-preset:hover{background:linear-gradient(135deg,#4F46E5,#8B5CF6);color:#fff;border-color:transparent;transform:translateY(-1px)}
+.prompt-preset.on{background:linear-gradient(135deg,#4F46E5,#8B5CF6);color:#fff;border-color:transparent}
+
+.range-wrap{position:relative;height:38px;margin-top:.5rem}
+.range-track{position:absolute;top:16px;left:0;right:0;height:6px;border-radius:6px;background:var(--line-2);}
+.range-fill{position:absolute;top:16px;height:6px;border-radius:6px;
+  background:linear-gradient(90deg,#F43F5E,#F59E0B,#10B981);transition:left .12s,right .12s;}
+.range-wrap input[type=range]{position:absolute;top:6px;left:0;width:100%;height:26px;
+  -webkit-appearance:none;appearance:none;background:transparent;pointer-events:none;}
+.range-wrap input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;
+  pointer-events:auto;cursor:grab;width:22px;height:22px;border-radius:50%;
+  background:linear-gradient(135deg,#4F46E5,#8B5CF6);border:3px solid var(--card);
+  box-shadow:0 4px 12px -2px rgba(99,102,241,.9);transition:transform .15s;}
+.range-wrap input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
+.range-wrap input[type=range]::-moz-range-thumb{pointer-events:auto;cursor:grab;width:22px;height:22px;border-radius:50%;
+  background:linear-gradient(135deg,#4F46E5,#8B5CF6);border:3px solid var(--card);box-shadow:0 4px 12px -2px rgba(99,102,241,.9);}
+.range-wrap input[type=range]::-moz-range-track{background:transparent}
+.tbl{width:100%;border-collapse:separate;border-spacing:0}
+.tbl thead th{font-size:.66rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted-2);
+  padding:.85rem 1rem;text-align:left;background:var(--p-50);border-bottom:1px solid var(--line);
+  position:sticky;top:0;z-index:2;}
+[data-theme="dark"] .tbl thead th{background:rgba(99,102,241,.08)}
+.tbl thead th.sortable{cursor:pointer;user-select:none;transition:color .15s,background .15s}
+.tbl thead th.sortable:hover{color:var(--p-700);background:rgba(99,102,241,.08)}
+.tbl thead th .sort-ic{display:inline-block;margin-left:.35rem;font-size:9px;opacity:.35}
+.tbl thead th.sort-active{color:var(--p-700);background:rgba(99,102,241,.1)}
+.tbl thead th.sort-active .sort-ic{opacity:1;color:var(--p-600)}
+.tbl tbody td{padding:.95rem 1rem;border-bottom:1px solid var(--line);font-size:.84rem;font-weight:600;color:var(--ink-3);vertical-align:middle}
+.tbl tbody tr{transition:background .18s;cursor:pointer}
+.tbl tbody tr:hover{background:var(--p-50)}
+[data-theme="dark"] .tbl tbody tr:hover{background:rgba(99,102,241,.08)}
+.tbl tbody tr.sel{background:var(--p-50)}
+[data-theme="dark"] .tbl tbody tr.sel{background:rgba(99,102,241,.14)}
+.kanban{display:grid;grid-template-columns:repeat(4,minmax(260px,1fr));gap:1rem;overflow-x:auto;padding-bottom:.5rem}
+@media(max-width:1024px){.kanban{grid-template-columns:repeat(4,280px)}}
+.kcol{background:var(--card);border:1px solid var(--line);border-radius:22px;
+  display:flex;flex-direction:column;max-height:calc(100vh - 260px);box-shadow:var(--sh-md);}
+.kcol-head{padding:1rem 1.15rem;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:.75rem;position:sticky;top:0;
+  background:var(--card);border-radius:22px 22px 0 0;z-index:2;}
+.kcol-head .kdot{width:10px;height:10px;border-radius:50%;flex:0 0 10px}
+.kcol-body{padding:.75rem;display:flex;flex-direction:column;gap:.6rem;overflow-y:auto;flex:1}
+.kcard{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:.85rem;
+  cursor:pointer;transition:.22s cubic-bezier(.16,1,.3,1);position:relative;}
+.kcard:hover{transform:translateY(-2px);border-color:var(--p-400);box-shadow:var(--sh-md)}
+.kcard.crit{background:linear-gradient(180deg,rgba(220,38,38,.05),transparent);border-color:rgba(220,38,38,.3)}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.cal-head{text-align:center;font-size:.66rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--muted-2);padding:.4rem 0}
+.cal-cell{aspect-ratio:1;border-radius:12px;background:var(--card);border:1.5px solid var(--line);
+  padding:6px;display:flex;flex-direction:column;cursor:pointer;transition:.18s;position:relative;}
+.cal-cell:hover{border-color:var(--p-400);transform:scale(1.03);z-index:2;box-shadow:var(--sh-md)}
+.cal-cell.empty{background:transparent;border-color:transparent;cursor:default}
+.cal-cell.today{border-color:var(--p-500);border-width:2.5px;background:linear-gradient(180deg,rgba(99,102,241,.06),transparent)}
+.cal-cell.past{opacity:.35}
+.cal-num{font-size:.72rem;font-weight:800;color:var(--ink-3)}
+.cal-dots{display:flex;gap:3px;flex-wrap:wrap;margin-top:auto}
+.cal-dot{width:6px;height:6px;border-radius:50%}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(500px,100vw);z-index:120;
+  background:linear-gradient(180deg,var(--card),var(--bg));border-left:1px solid var(--line);
+  box-shadow:-40px 0 90px -30px rgba(7,9,26,.5);
+  transform:translateX(102%);transition:transform .45s cubic-bezier(.16,1,.3,1);
+  display:flex;flex-direction:column;}
+.drawer.open{transform:none}
+.drawer-backdrop{position:fixed;inset:0;z-index:115;background:rgba(7,9,26,.5);backdrop-filter:blur(6px);
+  opacity:0;pointer-events:none;transition:opacity .3s;}
+.drawer-backdrop.show{opacity:1;pointer-events:auto}
+.modal-backdrop{position:fixed;inset:0;z-index:150;background:rgba(7,9,26,.55);backdrop-filter:blur(8px);
+  display:grid;place-items:center;padding:1.25rem;opacity:0;pointer-events:none;transition:opacity .25s;}
+.modal-backdrop.show{opacity:1;pointer-events:auto}
+.modal-box{width:100%;max-width:460px;background:var(--card);border-radius:32px;padding:1.75rem;
+  box-shadow:0 50px 100px -30px rgba(7,9,26,.65);border:1px solid var(--line);
+  transform:translateY(18px) scale(.97);transition:transform .32s cubic-bezier(.16,1,.3,1);max-height:88vh;overflow-y:auto;}
+.modal-backdrop.show .modal-box{transform:none}
+.toasts{position:fixed;top:1rem;right:1rem;z-index:200;display:flex;flex-direction:column;gap:.6rem;pointer-events:none}
+.toast{pointer-events:auto;display:flex;align-items:flex-start;gap:.75rem;
+  min-width:290px;max-width:420px;padding:.95rem 1.05rem;border-radius:16px;
+  background:var(--card);backdrop-filter:blur(14px);border:1px solid var(--line);box-shadow:var(--sh-lg);
+  animation:toastIn .45s cubic-bezier(.16,1,.3,1) both;}
+.toast.out{animation:toastOut .3s ease forwards}
+@keyframes toastIn{from{opacity:0;transform:translateX(44px) scale(.95)}to{opacity:1;transform:none}}
+@keyframes toastOut{to{opacity:0;transform:translateX(44px) scale(.95)}}
+.toast .bar{width:4px;border-radius:4px;align-self:stretch;background:var(--t,var(--p-600))}
+.toast .undo-btn{margin-left:auto;background:rgba(99,102,241,.1);color:var(--p-700);
+  border:1px solid rgba(99,102,241,.3);font-size:11px;font-weight:800;padding:.35rem .7rem;
+  border-radius:8px;cursor:pointer;transition:.2s;}
+.toast .undo-btn:hover{background:rgba(99,102,241,.2)}
+[data-theme="dark"] .toast .undo-btn{background:rgba(99,102,241,.2);color:#A5B4FC;border-color:rgba(99,102,241,.4)}
+.notif-drop{position:fixed;top:64px;right:1rem;width:min(390px,calc(100vw - 2rem));z-index:80;
+  background:var(--card);border:1px solid var(--line);border-radius:22px;box-shadow:var(--sh-xl);
+  transform-origin:top right;transform:scale(.94) translateY(-8px);opacity:0;pointer-events:none;
+  transition:.24s cubic-bezier(.16,1,.3,1);max-height:min(520px,calc(100vh - 90px));overflow:hidden;display:flex;flex-direction:column;}
+.notif-drop.show{opacity:1;transform:none;pointer-events:auto}
+.cmd-backdrop{position:fixed;inset:0;z-index:170;background:rgba(7,9,26,.6);backdrop-filter:blur(10px);
+  display:flex;align-items:flex-start;justify-content:center;padding:6vh 1rem 1rem;
+  opacity:0;pointer-events:none;transition:opacity .2s;}
+.cmd-backdrop.show{opacity:1;pointer-events:auto}
+.cmd-box{width:100%;max-width:600px;background:var(--card);border:1px solid var(--line);
+  border-radius:22px;box-shadow:0 50px 100px -20px rgba(7,9,26,.7);overflow:hidden;
+  transform:translateY(-14px) scale(.97);transition:transform .25s cubic-bezier(.16,1,.3,1);
+  display:flex;flex-direction:column;max-height:min(640px,80vh);}
+.cmd-backdrop.show .cmd-box{transform:none}
+.cmd-input{width:100%;background:transparent;border:none;outline:none;
+  padding:1.1rem 1.25rem;font-size:1rem;font-weight:700;color:var(--ink);}
+.cmd-input::placeholder{color:var(--muted-2)}
+.cmd-list{overflow-y:auto;max-height:460px;padding:.5rem;}
+.cmd-item{display:flex;align-items:center;gap:.85rem;padding:.75rem .95rem;border-radius:12px;
+  cursor:pointer;transition:.15s;color:var(--ink-3);}
+.cmd-item:hover,.cmd-item.sel{background:var(--p-50);color:var(--p-800)}
+[data-theme="dark"] .cmd-item:hover,[data-theme="dark"] .cmd-item.sel{background:rgba(99,102,241,.14);color:var(--p-300)}
+.cmd-item .cmd-ic{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;
+  background:rgba(99,102,241,.08);color:var(--p-600);font-size:.95rem;flex:0 0 34px;}
+.cmd-item .cmd-label{font-weight:700;font-size:.86rem;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cmd-item .cmd-hint{font-size:.66rem;font-weight:800;color:var(--muted-2);letter-spacing:.08em;text-transform:uppercase}
+.cmd-foot{border-top:1px solid var(--line);padding:.6rem 1rem;display:flex;align-items:center;gap:1rem;
+  font-size:.68rem;font-weight:700;color:var(--muted-2)}
+kbd{display:inline-block;padding:.15rem .42rem;border-radius:6px;font-family:'JetBrains Mono',monospace;
+  font-size:.65rem;font-weight:700;background:var(--p-50);border:1px solid var(--line-2);color:var(--p-700);}
+[data-theme="dark"] kbd{background:rgba(99,102,241,.14);color:var(--p-300)}
+.progress-ring{width:110px;height:110px;border-radius:50%;display:grid;place-items:center;
+  background:conic-gradient(var(--p-600) calc(var(--prog,0) * 1%), var(--line-2) 0);
+  transition:background .3s;margin:0 auto;position:relative}
+.progress-inner{width:88px;height:88px;border-radius:50%;background:var(--card);display:grid;place-items:center;}
+.bulkbar{position:fixed;left:50%;bottom:1.5rem;transform:translate(-50%,160%);z-index:90;
+  background:linear-gradient(135deg,rgba(15,23,42,.96),rgba(30,27,75,.96));
+  backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.1);border-radius:22px;
+  padding:.75rem .85rem;display:flex;align-items:center;gap:.55rem;flex-wrap:wrap;
+  box-shadow:0 30px 70px -20px rgba(0,0,0,.75);
+  transition:transform .45s cubic-bezier(.16,1,.3,1);max-width:calc(100vw - 2rem);}
+.bulkbar.show{transform:translate(-50%,0)}
+.bulk-btn{background:rgba(255,255,255,.08);color:#E2E8F0;border:1px solid rgba(255,255,255,.14)}
+.bulk-btn:hover{background:rgba(255,255,255,.18);color:#fff}
+.bulk-sep{width:1px;height:26px;background:rgba(255,255,255,.14)}
+.switch{position:relative;display:inline-block;width:42px;height:24px;flex:0 0 42px}
+.switch input{opacity:0;width:0;height:0}
+.switch span{position:absolute;cursor:pointer;inset:0;border-radius:999px;background:var(--line-2);transition:.24s;}
+.switch span::before{content:'';position:absolute;height:18px;width:18px;left:3px;bottom:3px;border-radius:50%;
+  background:#fff;transition:.24s cubic-bezier(.16,1,.3,1);box-shadow:0 2px 5px rgba(0,0,0,.2);}
+.switch input:checked + span{background:linear-gradient(135deg,#4F46E5,#8B5CF6)}
+.switch input:checked + span::before{transform:translateX(18px)}
+.chart-box{position:relative;width:100%}
+.chart-box canvas{max-width:100%}
+.heatmap{display:grid;grid-template-columns:repeat(auto-fill,minmax(28px,1fr));gap:5px}
+.heat-cell{aspect-ratio:1;border-radius:7px;position:relative;cursor:pointer;background:var(--line-2);transition:.2s;}
+.heat-cell:hover{transform:scale(1.15);z-index:2;box-shadow:0 4px 12px rgba(0,0,0,.2)}
+.heat-cell[data-n="1"]{background:#A7F3D0}
+.heat-cell[data-n="2"]{background:#FDE68A}
+.heat-cell[data-n="3"]{background:#FDBA74}
+.heat-cell[data-n="4"]{background:#FCA5A5}
+.heat-cell[data-n="5"]{background:#F87171}
+[data-theme="dark"] .heat-cell[data-n="1"]{background:rgba(16,185,129,.5)}
+[data-theme="dark"] .heat-cell[data-n="2"]{background:rgba(245,158,11,.5)}
+[data-theme="dark"] .heat-cell[data-n="3"]{background:rgba(251,146,60,.55)}
+[data-theme="dark"] .heat-cell[data-n="4"]{background:rgba(244,63,94,.55)}
+[data-theme="dark"] .heat-cell[data-n="5"]{background:rgba(220,38,38,.7)}
+[data-tip]{position:relative}
+[data-tip]:hover::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);
+  background:var(--ink);color:#fff;font-size:10px;font-weight:700;padding:.4rem .6rem;border-radius:8px;
+  white-space:nowrap;pointer-events:none;z-index:50;box-shadow:0 4px 12px rgba(0,0,0,.2);}
+.seg{display:inline-flex;background:var(--card);border:1.5px solid var(--line-2);border-radius:14px;padding:4px}
+.seg button{padding:.5rem .85rem;border-radius:10px;border:none;background:transparent;
+  font-size:.72rem;font-weight:800;color:var(--muted);cursor:pointer;transition:.2s;}
+.seg button.on{background:linear-gradient(135deg,#4F46E5,#8B5CF6);color:#fff;box-shadow:0 6px 14px -6px rgba(99,102,241,.9)}
+.collapse{max-height:0;overflow:hidden;transition:max-height .45s cubic-bezier(.16,1,.3,1),opacity .3s;opacity:0;}
+.collapse.open{max-height:780px;opacity:1;overflow:visible}
+.hide-scroll::-webkit-scrollbar{display:none}
+.live-dot{position:relative}
+.live-dot::after{content:'';position:absolute;inset:0;border-radius:50%;background:inherit;
+  animation:pulse 2.4s cubic-bezier(.4,0,.6,1) infinite}
+@keyframes pulse{0%{transform:scale(1);opacity:.75}70%{transform:scale(2.6);opacity:0}100%{opacity:0}}
+.spin{animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.bar-track{height:8px;border-radius:999px;background:var(--line-2);overflow:hidden}
+.bar-fill{height:100%;border-radius:999px;transition:width 1s cubic-bezier(.16,1,.3,1)}
+.fade-in{animation:fadeIn .5s cubic-bezier(.16,1,.3,1) both}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.alert-banner{position:relative;overflow:hidden;border-radius:22px;
+  background:linear-gradient(135deg,#7F1D1D 0%,#B91C1C 45%,#DC2626 100%);
+  padding:1.35rem 1.5rem;color:#fff;
+  box-shadow:0 20px 45px -20px rgba(220,38,38,.7);
+  border:1px solid rgba(255,255,255,.15);}
+.alert-banner::before{content:'';position:absolute;top:-60%;right:-10%;width:320px;height:320px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,255,255,.18),transparent 70%);
+  animation:float 8s ease-in-out infinite;}
+@keyframes float{0%,100%{transform:translate(0,0)}50%{transform:translate(-20px,20px)}}
+.alert-banner .siren{width:56px;height:56px;border-radius:18px;display:grid;place-items:center;
+  background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.25);
+  font-size:1.6rem;flex:0 0 56px;backdrop-filter:blur(8px);
+  animation:sirenPulse 1.6s ease-in-out infinite;}
+@keyframes sirenPulse{0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(255,255,255,.35)}50%{transform:scale(1.06);box-shadow:0 0 0 14px rgba(255,255,255,0)}}
+.alert-chip{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);
+  border-radius:14px;padding:.55rem .85rem;backdrop-filter:blur(6px);
+  font-weight:800;font-size:.72rem;cursor:pointer;transition:.2s;color:#fff;}
+.alert-chip:hover{background:rgba(255,255,255,.28);transform:translateY(-1px)}
+[data-density="compact"] .ucard{padding:1rem;border-radius:16px}
+[data-density="compact"] .ucard .avatar{width:44px;height:44px;flex:0 0 44px;border-radius:14px;font-size:.85rem}
+[data-density="compact"] .ucard .ring{width:42px;height:42px;flex:0 0 42px}
+[data-density="compact"] .kpi{padding:1rem}
+[data-density="compact"] .kpi-val{font-size:2rem}
+[data-density="compact"] .panel{padding:1.15rem}
+</style>
+
+<style id="mobile-optimization-patch">
+/* Mobile optimization patch */
+#nav-kanban,#nav-calendar,#view-kanban,#view-calendar{display:none !important;}
+@media (max-width: 768px){
+  .app-main{padding-left:0 !important;}
+  .sidebar{width:260px !important;}
+  .topbar{padding:10px !important;}
+  .kpi{padding:1rem !important;border-radius:16px !important;}
+  .kpi-val{font-size:1.8rem !important;}
+  .panel,.ucard{border-radius:16px !important;}
+  .tbl{font-size:12px !important;}
+  .grid,.grid-cols-2,.grid-cols-3,.grid-cols-4{
+      grid-template-columns:1fr !important;
+  }
+  .prompt-presets{
+      grid-template-columns:repeat(2,1fr) !important;
+  }
+  .btn,.chip{
+      min-height:44px;
+  }
+  body{
+      overflow-x:hidden !important;
+  }
+}
+</style>
+
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-overlay">
+  <div class="login-art">
+    <div class="grid-lines"></div>
+    <div class="orb a"></div><div class="orb b"></div><div class="orb c"></div>
+    <div class="relative z-10 h-full flex flex-col justify-between p-12 xl:p-16">
+      <div class="flex items-center gap-3">
+        <div class="w-11 h-11 rounded-2xl bg-white/12 border border-white/20 grid place-items-center backdrop-blur"><span class="text-white text-lg">⚡</span></div>
+        <span class="text-white font-extrabold tracking-tight text-lg">AutoSender<span class="text-cyan-300">PRO</span></span>
+      </div>
+      <div class="max-w-lg">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 border border-white/15 mb-6">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 live-dot"></span>
+          <span class="text-[10px] font-extrabold uppercase tracking-[.18em] text-white/80">Fleet online · v4.3</span>
+        </div>
+        <h1 class="text-4xl xl:text-5xl font-extrabold text-white leading-[1.08] tracking-tight">Command every node.<br>Instantly.</h1>
+        <p class="text-white/55 font-medium mt-5 leading-relaxed text-[15px]">
+          Fine-grained day increments, day-of-month expiry analytics, 5-day alerts, kanban, calendar, bulk import, undo — all in one console.
+        </p>
+        <div class="grid grid-cols-3 gap-5 mt-10">
+          <div><p class="text-3xl font-extrabold text-white tracking-tight">＋1d</p>
+            <p class="text-[10px] font-bold uppercase tracking-[.14em] text-white/40 mt-1">Quick add</p></div>
+          <div><p class="text-3xl font-extrabold text-white tracking-tight">⌘K</p>
+            <p class="text-[10px] font-bold uppercase tracking-[.14em] text-white/40 mt-1">Commands</p></div>
+          <div><p class="text-3xl font-extrabold text-white tracking-tight">5d</p>
+            <p class="text-[10px] font-bold uppercase tracking-[.14em] text-white/40 mt-1">Alert</p></div>
+        </div>
+      </div>
+      <p class="text-white/25 text-xs font-semibold">© AutoSender Pro · Royal Admin Console v4.3</p>
+    </div>
+  </div>
+  <div class="login-form-wrap">
+    <form class="login-card" id="login-form">
+      <div class="lg:hidden flex items-center gap-2.5 mb-9">
+        <div class="w-10 h-10 rounded-2xl grid place-items-center text-white" style="background:linear-gradient(135deg,#4F46E5,#8B5CF6)"><span>⚡</span></div>
+        <span class="font-extrabold tracking-tight text-lg" style="color:var(--ink)">AutoSender<span class="gradient-text">PRO</span></span>
+      </div>
+      <div class="w-14 h-14 rounded-3xl grid place-items-center mb-6" style="background:linear-gradient(135deg,#4F46E5,#8B5CF6 60%,#06B6D4);box-shadow:0 20px 35px -15px rgba(99,102,241,.9)">
+        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+        </svg>
+      </div>
+      <h1 class="text-[28px] font-extrabold tracking-tight leading-tight" style="color:var(--ink)">Admin access</h1>
+      <p class="font-bold text-[11px] uppercase tracking-[.2em] mt-2 mb-8" style="color:var(--muted-2)">Royal secure gateway</p>
+      <div class="space-y-3.5">
+        <div class="relative">
+          <span class="field-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg></span>
+          <input id="admin-user" type="text" class="field" placeholder="Username" autocomplete="username">
+        </div>
+        <div class="relative">
+          <span class="field-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg></span>
+          <input id="admin-pass" type="password" class="field" placeholder="Password" autocomplete="current-password">
+        </div>
+        <button type="submit" id="login-btn" class="btn-primary mt-2">Verify identity →</button>
+      </div>
+      <p id="login-error" class="hidden mt-5 text-center text-[11px] font-extrabold uppercase tracking-[.14em] text-rose-500">⚠ Access denied · invalid credentials</p>
+      <p class="text-center text-[11px] font-semibold mt-8" style="color:var(--muted-2)">Protected by token authentication · <span class="mono">sessionStorage</span></p>
+    </form>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app" class="hidden">
+  <div id="sidebar-scrim" class="sidebar-scrim" onclick="toggleSidebar(false)"></div>
+  <aside id="sidebar" class="sidebar">
+    <div class="px-5 pt-6 pb-5 border-b" style="border-color:var(--line)">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-2xl grid place-items-center text-white text-base shrink-0" style="background:linear-gradient(135deg,#4F46E5,#8B5CF6 60%,#06B6D4);box-shadow:0 14px 26px -12px rgba(99,102,241,.9)">⚡</div>
+        <div class="min-w-0">
+          <p class="font-extrabold tracking-tight text-[15px] leading-none" style="color:var(--ink)">AutoSender<span class="gradient-text">PRO</span></p>
+          <p class="text-[10px] font-bold uppercase tracking-[.16em] mt-1" style="color:var(--muted-2)">Command center v4.3</p>
+        </div>
+        <button class="icon-btn ml-auto lg:hidden" onclick="toggleSidebar(false)">✕</button>
+      </div>
+    </div>
+    <nav class="flex-1 px-3.5 py-5 space-y-1.5 overflow-y-auto hide-scroll">
+      <button class="w-full flex items-center gap-2.5 px-3 py-2.5 mb-3 rounded-xl border transition" style="background:var(--p-50);border-color:var(--line)" onclick="openCmdPalette()">
+        <span class="text-[11px] font-extrabold" style="color:var(--p-700)">⌘K</span>
+        <span class="text-[12px] font-bold" style="color:var(--muted)">Quick command…</span>
+      </button>
+      <p class="px-3 pb-2 text-[10px] font-extrabold uppercase tracking-[.18em]" style="color:var(--muted-2)">Overview</p>
+      <button class="nav-item active" id="nav-dashboard" onclick="switchView('dashboard')"><span class="nav-ico">◈</span> Dashboard</button>
+      <button class="nav-item" id="nav-users" onclick="switchView('users')"><span class="nav-ico">☰</span> Node Control <span class="badge" id="nav-users-count">0</span></button>
+      <button class="nav-item" id="nav-kanban" onclick="switchView('kanban')"><span class="nav-ico">▤</span> Kanban Board</button>
+      <button class="nav-item" id="nav-calendar" onclick="switchView('calendar')"><span class="nav-ico">▦</span> Calendar</button>
+      <button class="nav-item" id="nav-activity" onclick="switchView('activity')"><span class="nav-ico">↻</span> Activity Log</button>
+      <p class="px-3 pt-6 pb-2 text-[10px] font-extrabold uppercase tracking-[.18em]" style="color:var(--muted-2)">Fleet</p>
+      <div class="px-3 space-y-3.5">
+        <div>
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="text-[11px] font-bold" style="color:var(--muted)">Active</span>
+            <span class="text-[11px] font-extrabold text-emerald-600 mono" id="side-active">0</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill" id="side-bar-active" style="width:0%;background:linear-gradient(90deg,#34D399,#10B981)"></div></div>
+        </div>
+        <div>
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="text-[11px] font-bold" style="color:var(--muted)">Alert ≤5d</span>
+            <span class="text-[11px] font-extrabold text-rose-500 mono" id="side-crit">0</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill" id="side-bar-crit" style="width:0%;background:linear-gradient(90deg,#F87171,#DC2626)"></div></div>
+        </div>
+        <div>
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="text-[11px] font-bold" style="color:var(--muted)">Suspended</span>
+            <span class="text-[11px] font-extrabold text-amber-600 mono" id="side-susp">0</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill" id="side-bar-susp" style="width:0%;background:linear-gradient(90deg,#FBBF24,#F59E0B)"></div></div>
+        </div>
+      </div>
+      <p class="px-3 pt-6 pb-2 text-[10px] font-extrabold uppercase tracking-[.18em]" style="color:var(--muted-2)">Preferences</p>
+      <div class="px-3 space-y-3">
+        <label class="flex items-center justify-between gap-3 px-3.5 py-2.5 rounded-2xl cursor-pointer" style="background:var(--p-50);border:1px solid var(--line)">
+          <span class="text-[12px] font-bold" style="color:var(--ink-3)">🌙 Dark</span>
+          <div class="switch"><input type="checkbox" id="theme-toggle" onchange="toggleTheme(this.checked)"><span></span></div>
+        </label>
+        <label class="flex items-center justify-between gap-3 px-3.5 py-2.5 rounded-2xl cursor-pointer" style="background:var(--p-50);border:1px solid var(--line)">
+          <span class="text-[12px] font-bold" style="color:var(--ink-3)">🧊 Compact</span>
+          <div class="switch"><input type="checkbox" id="density-toggle" onchange="toggleDensity(this.checked)"><span></span></div>
+        </label>
+      </div>
+    </nav>
+    <div class="p-3.5 border-t" style="border-color:var(--line)">
+      <div class="rounded-2xl p-3.5" style="background:linear-gradient(135deg,rgba(99,102,241,.08),rgba(139,92,246,.1));border:1px solid var(--line)">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl grid place-items-center text-white text-xs font-extrabold shrink-0" style="background:linear-gradient(135deg,#4F46E5,#8B5CF6)">A</div>
+          <div class="min-w-0 flex-1">
+            <p class="text-xs font-extrabold truncate" style="color:var(--ink)">Administrator</p>
+            <p class="text-[10px] font-bold flex items-center gap-1.5" style="color:var(--muted-2)"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 live-dot"></span> Online</p>
+          </div>
+        </div>
+        <button onclick="handleLogout()" class="btn btn-ghost w-full mt-3 !text-[11px] !py-2.5">⏻ Sign out</button>
+      </div>
+    </div>
+  </aside>
+
+  <div class="app-main min-h-screen flex flex-col">
+    <header class="topbar px-4 sm:px-6 lg:px-8 py-3">
+      <div class="flex items-center gap-3">
+        <button class="icon-btn lg:hidden" onclick="toggleSidebar(true)">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+        <div class="min-w-0 flex-1">
+          <h1 id="page-title" class="text-lg sm:text-xl font-extrabold tracking-tight truncate" style="color:var(--ink)">Dashboard</h1>
+          <p id="page-sub" class="text-[11px] font-bold uppercase tracking-[.12em] truncate" style="color:var(--muted-2)">System health &amp; fleet overview</p>
+        </div>
+        <button class="hidden md:flex items-center gap-2 px-3.5 py-2 rounded-full transition hover:opacity-90" style="background:var(--card);border:1px solid var(--line)" onclick="openCmdPalette()">
+          <span class="text-[11px] font-extrabold" style="color:var(--p-700)">⌘K</span>
+          <span class="text-[10px] font-extrabold uppercase tracking-[.14em]" style="color:var(--muted-2)">Commands</span>
+        </button>
+        <div class="hidden lg:flex items-center gap-2 px-3.5 py-2 rounded-full" style="background:var(--card);border:1px solid var(--line)">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 live-dot"></span>
+          <span class="text-[10px] font-extrabold uppercase tracking-[.14em] text-emerald-600">Live</span>
+        </div>
+        <div class="hidden sm:block text-right mr-1">
+          <p class="text-[10px] font-extrabold uppercase tracking-[.14em]" style="color:var(--muted-2)">Next sync</p>
+          <p class="text-[11px] font-bold mono" style="color:var(--ink-3)" id="countdown">—</p>
+        </div>
+        <button class="icon-btn" onclick="openNotifications()" id="notif-btn" title="Notifications">🔔<span class="dot-badge hidden" id="notif-badge">0</span></button>
+        <button class="icon-btn" id="refresh-btn" onclick="loadAll(true)" title="Refresh (R)">
+          <svg id="refresh-ico" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <main class="flex-1 px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
+      <!-- DASHBOARD -->
+      <section id="view-dashboard" class="fade-in">
+
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 lg:gap-5">
+          <div class="kpi" style="--k:#6366F1">
+            <div class="flex items-start justify-between">
+              <div><p class="text-[10px] font-extrabold uppercase tracking-[.16em] mb-2" style="color:var(--muted-2)">Total nodes</p>
+                <p class="kpi-val" id="stat-total">0</p></div>
+              <div class="kpi-ico">📊</div>
+            </div>
+            <svg class="spark" viewBox="0 0 100 40" preserveAspectRatio="none" style="color:#6366F1"><path d="M0,30 L20,25 L40,28 L60,15 L80,20 L100,8" stroke="currentColor"/></svg>
+          </div>
+          <div class="kpi" style="--k:#10B981">
+            <div class="flex items-start justify-between">
+              <div><p class="text-[10px] font-extrabold uppercase tracking-[.16em] mb-2" style="color:var(--muted-2)">Active</p>
+                <p class="kpi-val" id="stat-active" style="color:#059669">0</p></div>
+              <div class="kpi-ico">✅</div>
+            </div>
+            <p class="text-[11px] font-bold mt-3 flex items-center gap-1.5" style="color:var(--muted-2)"><span id="stat-active-pct" class="font-extrabold text-emerald-600">0%</span> of total fleet</p>
+          </div>
+          <div class="kpi" style="--k:#DC2626">
+            <div class="flex items-start justify-between">
+              <div><p class="text-[10px] font-extrabold uppercase tracking-[.16em] mb-2" style="color:var(--muted-2)">Alert ≤5d</p>
+                <p class="kpi-val" id="stat-critical" style="color:#DC2626">0</p></div>
+              <div class="kpi-ico">🚨</div>
+            </div>
+            <p class="text-[11px] font-bold mt-3" style="color:var(--muted-2)">Mobile alerts triggered</p>
+          </div>
+          <div class="kpi" style="--k:#F59E0B">
+            <div class="flex items-start justify-between">
+              <div><p class="text-[10px] font-extrabold uppercase tracking-[.16em] mb-2" style="color:var(--muted-2)">Suspended</p>
+                <p class="kpi-val" id="stat-suspended" style="color:#D97706">0</p></div>
+              <div class="kpi-ico">⛔</div>
+            </div>
+            <p class="text-[11px] font-bold mt-3" style="color:var(--muted-2)">Blocked by admin</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-4 lg:gap-5 mt-4 lg:mt-5">
+          <div class="panel p-6">
+            <h3 class="font-extrabold tracking-tight mb-4" style="color:var(--ink)">Status mix</h3>
+            <div class="chart-box" style="height:230px"><canvas id="chartStatus"></canvas></div>
+          </div>
+          <div class="panel p-6">
+            <h3 class="font-extrabold tracking-tight mb-4" style="color:var(--ink)">Expiration buckets</h3>
+            <div class="chart-box" style="height:230px"><canvas id="chartBuckets"></canvas></div>
+          </div>
+          <div class="panel p-6">
+            <h3 class="font-extrabold tracking-tight mb-4" style="color:var(--ink)">Plan mix</h3>
+            <div class="chart-box" style="height:230px"><canvas id="chartPlan"></canvas></div>
+          </div>
+        </div>
+
+        <div class="panel p-6 mt-4 lg:mt-5">
+          <div class="flex items-start justify-between mb-5 flex-wrap gap-3">
+            <div>
+              <div class="flex items-center gap-2.5">
+                <span class="w-8 h-8 rounded-xl grid place-items-center text-white text-sm" style="background:linear-gradient(135deg,#DC2626,#F43F5E)">📅</span>
+                <h3 class="font-extrabold tracking-tight" style="color:var(--ink)">Expirations by day of month</h3>
+              </div>
+              <p class="text-[11px] font-bold uppercase tracking-[.12em] mt-1.5 ml-10.5" style="color:var(--muted-2)">Frequency of expirations for each calendar day (1 → 31)</p>
+            </div>
+            <div class="flex items-center gap-2 flex-wrap">
+              <div class="seg" id="calday-range">
+                <button class="on" data-range="30">Next 30d</button>
+                <button data-range="60">Next 60d</button>
+                <button data-range="90">Next 90d</button>
+                <button data-range="all">All upcoming</button>
+              </div>
+              <button class="btn btn-ghost" onclick="exportCalendar()">⬇ CSV</button>
+            </div>
+          </div>
+          <div class="chart-box" style="height:300px"><canvas id="chartCalendar"></canvas></div>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-5" id="calday-summary"></div>
+        </div>
+
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-4 lg:gap-5 mt-4 lg:mt-5">
+          <div class="panel p-6 xl:col-span-2">
+            <div class="flex items-center justify-between mb-4 flex-wrap gap-3">
+              <div>
+                <h3 class="font-extrabold tracking-tight" style="color:var(--ink)">Expiration heatmap</h3>
+                <p class="text-[11px] font-bold uppercase tracking-[.12em] mt-0.5" style="color:var(--muted-2)">Next 90 days · click any cell to filter</p>
+              </div>
+            </div>
+            <div class="heatmap" id="heatmap"></div>
+          </div>
+          <div class="panel p-6">
+            <div class="flex items-center justify-between mb-4">
+              <div>
+                <h3 class="font-extrabold tracking-tight" style="color:var(--ink)">Urgent renewals</h3>
+                <p class="text-[11px] font-bold uppercase tracking-[.12em] mt-0.5" style="color:var(--muted-2)">≤ 5 days · by priority</p>
+              </div>
+              <span class="pill crit"><span class="dot"></span>Alert</span>
+            </div>
+            <div id="urgent-list" class="space-y-2 max-h-[330px] overflow-y-auto pr-1"></div>
+          </div>
+        </div>
+
+        <div class="panel p-6 mt-4 lg:mt-5">
+          <div class="flex items-center justify-between mb-5 flex-wrap gap-3">
+            <div>
+              <h3 class="font-extrabold tracking-tight" style="color:var(--ink)">Upcoming expirations timeline</h3>
+              <p class="text-[11px] font-bold uppercase tracking-[.12em] mt-0.5" style="color:var(--muted-2)">Nodes expiring soon (relative days)</p>
+            </div>
+            <div class="seg" id="timeline-range">
+              <button class="on" data-range="7">7d</button>
+              <button data-range="14">14d</button>
+              <button data-range="30">30d</button>
+            </div>
+          </div>
+          <div class="chart-box" style="height:220px"><canvas id="chartTimeline"></canvas></div>
+        </div>
+
+        <div class="panel p-6 mt-4 lg:mt-5">
+          <div class="flex flex-wrap items-center justify-between gap-4">
+            <div><h3 class="font-extrabold tracking-tight" style="color:var(--ink)">Quick actions</h3>
+              <p class="text-[11px] font-bold uppercase tracking-[.12em] mt-0.5" style="color:var(--muted-2)">Shortcuts &amp; one-click workflows</p></div>
+            <div class="flex flex-wrap gap-2.5">
+              <button class="btn btn-royal" onclick="switchView('users')">☰ Manage nodes</button>
+              <button class="btn btn-danger" onclick="quickPreset('alerts')">🚨 Alert ≤5d</button>
+              <button class="btn btn-warn" onclick="quickPreset('expiring')">⏳ Expiring ≤30d</button>
+              <button class="btn btn-ghost" onclick="openImportModal()">📥 Bulk import</button>
+              <button class="btn btn-ghost" onclick="exportData('csv')">⬇ Export CSV</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- USERS -->
+      <section id="view-users" class="hidden fade-in">
+        <div class="panel p-4 sm:p-5 mb-4 lg:mb-5">
+          <div class="flex flex-col xl:flex-row gap-3.5 xl:items-center">
+            <div class="relative flex-1 min-w-0">
+              <span class="absolute left-4 top-1/2 -translate-y-1/2" style="color:var(--muted-2)"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path stroke-linecap="round" d="M20 20l-3.5-3.5"/></svg></span>
+              <input id="search" oninput="onSearch(this.value)" type="text" placeholder="Search phone number…   ( / )" class="w-full rounded-2xl pl-11 pr-4 py-3 text-sm font-bold outline-none transition" style="background:var(--card);border:2px solid var(--line-2);color:var(--ink)">
+            </div>
+            <div class="flex items-center gap-2.5 flex-wrap">
+              <button class="btn btn-ghost" id="filter-toggle" onclick="toggleFilterPanel()">⚙️ Filters <span id="filter-count" class="chip !py-0 !px-1.5 !text-[10px] !border-0" style="background:var(--p-100);color:var(--p-700)">0</span></button>
+              <div class="relative">
+                <select id="sort" onchange="state.sort=this.value; renderUsers()" class="appearance-none rounded-2xl pl-3.5 pr-9 py-2.5 text-xs font-extrabold outline-none cursor-pointer" style="background:var(--card);border:2px solid var(--line-2);color:var(--ink-3)">
+                  <option value="priority">🎯 Priority score</option>
+                  <option value="status">Status priority</option>
+                  <option value="days-asc">Days remaining ↑</option>
+                  <option value="days-desc">Days remaining ↓</option>
+                  <option value="newest">📅 Registered ↓ newest first</option>
+                  <option value="oldest">📅 Registered ↑ oldest first</option>
+                  <option value="phone">Phone A→Z</option>
+                  <option value="phone-desc">Phone Z→A</option>
+                </select>
+                <span class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[10px]" style="color:var(--muted-2)">▼</span>
+              </div>
+              <div class="seg">
+                <button id="vt-grid" class="on" onclick="setView('grid')">▦ Grid</button>
+                <button id="vt-list" onclick="setView('list')">☰ List</button>
+              </div>
+              <button class="btn btn-ghost" onclick="toggleSelectAll()" id="select-all-btn">☑ Select all</button>
+              <button class="icon-btn" onclick="openImportModal()" title="Bulk import">📥</button>
+              <button class="icon-btn" onclick="exportData('csv')" title="Export CSV">⬇</button>
+            </div>
+          </div>
+
+          <div class="collapse" id="filter-panel">
+            <div class="mt-4 pt-4 border-t grid grid-cols-1 lg:grid-cols-2 gap-5" style="border-color:var(--line)">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <p class="text-[11px] font-extrabold uppercase tracking-[.14em]" style="color:var(--muted-2)">Days remaining</p>
+                  <span class="text-xs font-extrabold mono px-2 py-0.5 rounded-lg" style="background:var(--p-50);color:var(--p-700)" id="days-label">0 – 400+</span>
+                </div>
+                <div class="range-wrap">
+                  <div class="range-track"></div>
+                  <div class="range-fill" id="range-fill" style="left:0%;right:0%"></div>
+                  <input type="range" id="days-min" min="0" max="400" value="0" oninput="onDaysRange()">
+                  <input type="range" id="days-max" min="0" max="400" value="400" oninput="onDaysRange()">
+                </div>
+                <div class="flex items-center gap-2 mt-3 flex-wrap">
+                  <button class="chip !py-1.5 !text-[10px] !border-rose-300" onclick="setDaysRange(0,5)" style="background:rgba(220,38,38,.08);color:#B91C1C">🚨 Alert ≤5d</button>
+                  <button class="chip !py-1.5 !text-[10px]" onclick="setDaysRange(0,3)">Critical ≤3d</button>
+                  <button class="chip !py-1.5 !text-[10px]" onclick="setDaysRange(0,7)">⏳ ≤7d</button>
+                  <button class="chip !py-1.5 !text-[10px]" onclick="setDaysRange(8,30)">📅 8–30d</button>
+                  <button class="chip !py-1.5 !text-[10px]" onclick="setDaysRange(31,90)">📆 31–90d</button>
+                  <button class="chip !py-1.5 !text-[10px]" onclick="setDaysRange(91,400)">🎯 90d+</button>
+                  <button class="chip !py-1.5 !text-[10px]" onclick="setDaysRange(0,400)">∞ All</button>
+                </div>
+                <p class="text-[11px] font-bold mt-3" style="color:var(--muted-2)">Showing nodes with <span class="font-extrabold" style="color:var(--p-600)" id="days-range-text">any remaining days</span></p>
+              </div>
+              <div class="space-y-4">
+                <div>
+                  <p class="text-[11px] font-extrabold uppercase tracking-[.14em] mb-2" style="color:var(--muted-2)">Plan duration</p>
+                  <div class="flex gap-2 flex-wrap" id="plan-filters">
+                    <button class="chip active" data-plan="all" onclick="setPlanFilter('all')">All</button>
+                    <button class="chip" data-plan="1" onclick="setPlanFilter('1')">Trial (≤7d)</button>
+                    <button class="chip" data-plan="30" onclick="setPlanFilter('30')">Monthly</button>
+                    <button class="chip" data-plan="365" onclick="setPlanFilter('365')">Annual</button>
+                  </div>
+                </div>
+                <div>
+                  <p class="text-[11px] font-extrabold uppercase tracking-[.14em] mb-2" style="color:var(--muted-2)">Include</p>
+                  <div class="space-y-2">
+                    <label class="flex items-center gap-3 cursor-pointer">
+                      <div class="switch"><input type="checkbox" id="inc-unknown" checked onchange="state.includeUnknown=this.checked; renderUsers()"><span></span></div>
+                      <span class="text-[12px] font-bold" style="color:var(--ink-3)">Syncing nodes</span>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer">
+                      <div class="switch"><input type="checkbox" id="inc-suspended" checked onchange="state.includeSuspended=this.checked; renderUsers()"><span></span></div>
+                      <span class="text-[12px] font-bold" style="color:var(--ink-3)">Suspended nodes</span>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer">
+                      <div class="switch"><input type="checkbox" id="inc-snoozed" onchange="state.includeSnoozed=this.checked; renderUsers()"><span></span></div>
+                      <span class="text-[12px] font-bold" style="color:var(--ink-3)">Snoozed alerts</span>
+                    </label>
+                  </div>
+                </div>
+                <div class="flex items-center gap-2 pt-2">
+                  <button class="btn btn-ghost flex-1" onclick="resetFilters()">↻ Reset</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2 mt-4 overflow-x-auto pb-0.5 hide-scroll" id="filter-chips">
+            <button class="chip active" data-filter="all" onclick="setFilter('all')">All <span class="cnt" id="c-all">0</span></button>
+            <button class="chip" data-filter="active" onclick="setFilter('active')">● Active <span class="cnt" id="c-active">0</span></button>
+            <button class="chip" data-filter="critical" onclick="setFilter('critical')" style="border-color:rgba(220,38,38,.3)">🚨 Alert ≤5d <span class="cnt" id="c-critical">0</span></button>
+            <button class="chip" data-filter="suspended" onclick="setFilter('suspended')">⛔ Suspended <span class="cnt" id="c-suspended">0</span></button>
+            <button class="chip" data-filter="expired" onclick="setFilter('expired')">⚠ Expired <span class="cnt" id="c-expired">0</span></button>
+            <button class="chip" data-filter="unknown" onclick="setFilter('unknown')">◌ Syncing <span class="cnt" id="c-unknown">0</span></button>
+            <button class="chip" data-filter="healthy" onclick="setFilter('healthy')">✓ Healthy >30d <span class="cnt" id="c-healthy">0</span></button>
+            <button class="chip" data-filter="noted" onclick="setFilter('noted')">📝 Noted <span class="cnt" id="c-noted">0</span></button>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between mb-3.5 px-1 flex-wrap gap-3">
+          <p class="text-[11px] font-extrabold uppercase tracking-[.14em]" style="color:var(--muted-2)">
+            Showing <span id="result-count" style="color:var(--ink)">0</span> node(s)
+            <span id="active-filters" class="ml-2 hidden"></span>
+          </p>
+          <button onclick="clearSelection()" id="clear-sel" class="hidden text-[11px] font-extrabold uppercase tracking-[.12em] text-rose-500 hover:text-rose-700 transition">✕ Clear selection</button>
+        </div>
+
+        <div id="user-cards" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-5"></div>
+        <div id="user-table-wrap" class="panel overflow-hidden hidden">
+          <div class="overflow-x-auto">
+            <table class="tbl">
+              <thead><tr>
+                <th style="width:44px"></th>
+                <th>Node</th>
+                <th>Status</th>
+                <th class="sortable" onclick="toggleSort('days')">Days left <span class="sort-ic" id="sort-ic-days">↕</span></th>
+                <th class="sortable" onclick="toggleSort('priority')">Priority <span class="sort-ic" id="sort-ic-priority">↕</span></th>
+                <th class="sortable" onclick="toggleSort('registered')">Registered <span class="sort-ic" id="sort-ic-registered">↕</span></th>
+                <th class="text-right">Actions</th>
+              </tr></thead>
+              <tbody id="user-table"></tbody>
+            </table>
+          </div>
+        </div>
+        <div id="empty-state" class="hidden panel p-14 text-center">
+          <div class="w-20 h-20 rounded-3xl mx-auto grid place-items-center text-3xl mb-5" style="background:var(--p-50)">🔍</div>
+          <h3 class="font-extrabold text-lg tracking-tight" style="color:var(--ink)">No nodes match your filters</h3>
+          <p class="text-sm font-semibold mt-2" style="color:var(--muted-2)">Try widening the days range or clearing filters.</p>
+          <button class="btn btn-royal mt-6 mx-auto" onclick="resetFilters()">Reset all filters</button>
+        </div>
+      </section>
+
+      <!-- KANBAN -->
+      <section id="view-kanban" class="hidden fade-in">
+        <div class="flex items-center justify-between mb-4 flex-wrap gap-3">
+          <div>
+            <h2 class="text-2xl font-extrabold tracking-tight" style="color:var(--ink)">Fleet board</h2>
+            <p class="text-[11px] font-bold uppercase tracking-[.12em] mt-1" style="color:var(--muted-2)">Group nodes by status</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button class="btn btn-ghost" onclick="exportData('csv')">⬇ Export</button>
+            <button class="btn btn-royal" onclick="openImportModal()">📥 Import</button>
+          </div>
+        </div>
+        <div class="kanban" id="kanban"></div>
+      </section>
+
+      <!-- CALENDAR -->
+      <section id="view-calendar" class="hidden fade-in">
+        <div class="panel p-6">
+          <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+            <div>
+              <h2 class="text-xl font-extrabold tracking-tight" style="color:var(--ink)">Expiration calendar</h2>
+              <p class="text-[11px] font-bold uppercase tracking-[.12em] mt-0.5" style="color:var(--muted-2)">Nodes expiring each day</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <button class="icon-btn" onclick="shiftCalendar(-1)">◀</button>
+              <span class="text-sm font-extrabold mono px-3 py-2 rounded-xl" style="background:var(--p-50);color:var(--ink)" id="cal-month-label">—</span>
+              <button class="icon-btn" onclick="shiftCalendar(1)">▶</button>
+              <button class="btn btn-ghost ml-2" onclick="state.calMonth=new Date().getMonth();state.calYear=new Date().getFullYear();renderCalendar()">Today</button>
+            </div>
+          </div>
+          <div class="cal-grid mb-2" id="cal-head"></div>
+          <div class="cal-grid" id="cal-body"></div>
+          <div class="flex items-center gap-4 mt-6 flex-wrap text-[11px] font-bold" style="color:var(--muted-2)">
+            <span class="flex items-center gap-1.5"><span class="cal-dot" style="background:#DC2626;width:8px;height:8px"></span>Alert ≤5d</span>
+            <span class="flex items-center gap-1.5"><span class="cal-dot" style="background:#F59E0B;width:8px;height:8px"></span>Expiring ≤15d</span>
+            <span class="flex items-center gap-1.5"><span class="cal-dot" style="background:#6366F1;width:8px;height:8px"></span>Later</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ACTIVITY -->
+      <section id="view-activity" class="hidden fade-in">
+        <div class="panel p-6">
+          <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+            <div><h3 class="font-extrabold tracking-tight" style="color:var(--ink)">Activity log</h3>
+              <p class="text-[11px] font-bold uppercase tracking-[.12em] mt-0.5" style="color:var(--muted-2)">Admin actions performed in this session</p></div>
+            <div class="flex items-center gap-2">
+              <button class="btn btn-ghost" onclick="exportActivity()">⬇ Export</button>
+              <button class="btn btn-ghost" onclick="clearActivity()">🗑 Clear</button>
+            </div>
+          </div>
+          <div id="activity-list" class="space-y-2.5"></div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="px-4 sm:px-6 lg:px-8 py-6 text-center">
+      <p class="text-[11px] font-bold uppercase tracking-[.14em]" style="color:var(--muted-2)">
+        AutoSender Pro · Command Center <span class="mono">v4.3</span> · day increments · day-of-month analytics · ⌘K
+      </p>
+    </footer>
+  </div>
+
+  <div id="bulkbar" class="bulkbar">
+    <span class="px-3 text-xs font-extrabold text-white/90 whitespace-nowrap"><span id="bulk-count" class="mono">0</span> selected</span>
+    <span class="bulk-sep"></span>
+    <button class="btn bulk-btn" onclick="bulkAction('authorize')">✓ Authorize</button>
+    <button class="btn bulk-btn" onclick="bulkAction('suspend')">⛔ Suspend</button>
+    <button class="btn bulk-btn" onclick="bulkAddDays(1)">+1d</button>
+    <button class="btn bulk-btn" onclick="bulkAddDays(2)">+2d</button>
+    <button class="btn bulk-btn" onclick="bulkAddDays(5)">+5d</button>
+    <button class="btn bulk-btn" onclick="bulkAddDays(7)">+7d</button>
+    <button class="btn bulk-btn" onclick="bulkAddDays(30)">+30d</button>
+    <button class="btn bulk-btn" onclick="bulkAddDaysCustom()">＋ Custom…</button>
+    <span class="bulk-sep"></span>
+    <button class="btn bulk-btn" onclick="bulkAction('snooze')">🔕 Snooze</button>
+    <button class="btn bulk-btn" style="color:#FCA5A5" onclick="bulkAction('delete')">🗑 Delete</button>
+    <button class="btn bulk-btn" onclick="clearSelection()">✕</button>
+  </div>
+</div>
+
+<div id="notif-drop" class="notif-drop">
+  <div class="px-5 py-4 border-b flex items-center justify-between" style="border-color:var(--line)">
+    <div><p class="font-extrabold tracking-tight" style="color:var(--ink)">Notifications</p>
+      <p class="text-[10px] font-bold uppercase tracking-[.14em]" style="color:var(--muted-2)">5-day window alerts</p></div>
+    <button class="icon-btn !w-8 !h-8 !text-[11px]" onclick="closeNotifications()">✕</button>
+  </div>
+  <div id="notif-list" class="flex-1 overflow-y-auto p-3 space-y-2"></div>
+</div>
+
+<div id="drawer-backdrop" class="drawer-backdrop" onclick="closeDrawer()"></div>
+<aside id="drawer" class="drawer">
+  <div id="drawer-content" class="flex-1 overflow-y-auto"></div>
+</aside>
+
+<div id="modal-backdrop" class="modal-backdrop">
+  <div class="modal-box" id="modal-box"></div>
+</div>
+
+<div id="cmd-backdrop" class="cmd-backdrop" onclick="if(event.target===this) closeCmdPalette()">
+  <div class="cmd-box">
+    <div class="flex items-center gap-3 border-b" style="border-color:var(--line)">
+      <span class="pl-5 text-lg" style="color:var(--muted-2)">⌘</span>
+      <input id="cmd-input" class="cmd-input" placeholder="Type a command or search…" autocomplete="off">
+      <span class="pr-5 text-[10px] font-extrabold uppercase tracking-[.14em]" style="color:var(--muted-2)">ESC</span>
+    </div>
+    <div class="cmd-list" id="cmd-list"></div>
+    <div class="cmd-foot">
+      <span><kbd>↑</kbd> <kbd>↓</kbd> navigate</span>
+      <span><kbd>↵</kbd> select</span>
+      <span><kbd>ESC</kbd> close</span>
+    </div>
+  </div>
+</div>
+
+<div id="toasts" class="toasts"></div>
+
+<script>
+const API_URL = document.querySelector('meta[name="api-base-url"]')?.content.trim().replace(/\/+$/, '') ?? '';
+const ALERT_DAYS = 5;
+
+const SNOOZE_KEY = 'autosender_snooze';
+const NOTES_KEY = 'autosender_notes';
+const FIRSTSEEN_KEY = 'autosender_firstseen';
+
+const state = {
+  token: sessionStorage.getItem('admin_token') || null,
+  users: [], statuses: {},
+  analytics:{ totalUsers:0, activeUsers:0, suspendedUsers:0 },
+  query:'', filter:'all', sort:'priority', view:'grid',
+  plan:'all', daysMin:0, daysMax:400,
+  includeUnknown:true, includeSuspended:true, includeSnoozed:false,
+  selected:new Set(), activity:[], alerts:true,
+  timelineRange:7, calendarRange:30, busy:false, charts:{},
+  pending:new Set(),
+  lastAction:null,
+  snoozes: safeJSON(SNOOZE_KEY, {}),
+  notes: safeJSON(NOTES_KEY, {}),
+  firstSeen: safeJSON(FIRSTSEEN_KEY, {}),
+  calMonth: new Date().getMonth(),
+  calYear: new Date().getFullYear(),
+  cmdIndex: 0, cmdFiltered: [],
+  nextRefresh: Date.now() + 60000
+};
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+function safeJSON(key, def) { try { return JSON.parse(localStorage.getItem(key)) || def; } catch (_) { return def; } }
+function saveJSON(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch (_) {} }
+
+const savedTheme = localStorage.getItem('theme') || 'light';
+if (savedTheme === 'dark') document.documentElement.setAttribute('data-theme','dark');
+const savedDensity = localStorage.getItem('density') || 'cozy';
+if (savedDensity === 'compact') document.documentElement.setAttribute('data-density','compact');
+
+window.addEventListener('DOMContentLoaded', () => {
+  const t = $('theme-toggle'); if (t && savedTheme === 'dark') t.checked = true;
+  const d = $('density-toggle'); if (d && savedDensity === 'compact') d.checked = true;
+  if (state.token) showDashboard();
+});
+
+function toggleTheme(dark) {
+  if (dark) document.documentElement.setAttribute('data-theme','dark');
+  else document.documentElement.removeAttribute('data-theme');
+  localStorage.setItem('theme', dark ? 'dark' : 'light');
+  Object.values(state.charts).forEach(c => { if (c && c.destroy) c.destroy(); });
+  state.charts = {};
+  if (state.token) { renderCharts(); renderDayOfMonthChart(); renderTimeline(); }
+}
+function toggleDensity(compact) {
+  if (compact) document.documentElement.setAttribute('data-density','compact');
+  else document.documentElement.removeAttribute('data-density');
+  localStorage.setItem('density', compact ? 'compact' : 'cozy');
+}
+
+/* ============================================================
+   LOGIN
+   ============================================================ */
+$('login-form').addEventListener('submit', e => { e.preventDefault(); handleLogin(); });
+async function handleLogin() {
+  const username = $('admin-user').value.trim();
+  const password = $('admin-pass').value;
+  const btn = $('login-btn'); const err = $('login-error');
+  if (!username || !password) { err.textContent = '⚠ Both fields are required'; err.classList.remove('hidden'); return; }
+  btn.disabled = true; btn.textContent = 'Verifying…'; err.classList.add('hidden');
+  try {
+    const res = await fetch(`${API_URL}/admin/login`, {
+      method:'POST', headers:{ 'Content-Type':'application/json' },
+      body: JSON.stringify({ username, password })
+    });
+    if (res.ok) {
+      const data = await res.json();
+      state.token = data.token;
+      sessionStorage.setItem('admin_token', state.token);
+      showDashboard();
+      toast('Welcome back, Administrator', 'ok', 'Access granted');
+    } else {
+      err.textContent = '⚠ Access denied · invalid credentials';
+      err.classList.remove('hidden');
+      $('admin-pass').value = ''; $('admin-pass').focus();
+    }
+  } catch (e) {
+    err.textContent = '⚠ Server unavailable · check connection';
+    err.classList.remove('hidden');
+  } finally { btn.disabled = false; btn.textContent = 'Verify identity →'; }
+}
+function showDashboard() { $('login-overlay').style.display = 'none'; $('app').classList.remove('hidden'); loadAll(); }
+function handleLogout() {
+  confirmDialog({ title:'Sign out?', message:'You will need to re-authenticate to access the command center.', confirmText:'Sign out', danger:false }).then(ok => {
+    if (!ok) return; sessionStorage.clear(); location.reload();
+  });
+}
+
+/* ============================================================
+   DATA LOADING
+   ============================================================ */
+async function loadAll(showToast, retries = 1) {
+  if (state.busy) return;
+  state.busy = true;
+  state.nextRefresh = Date.now() + 60000;
+  const ico = $('refresh-ico'); if (ico) ico.classList.add('spin');
+  try {
+    const [aRes, uRes] = await Promise.all([
+      fetch(`${API_URL}/status/analytics`, { headers:{ 'x-admin-key': state.token } }),
+      fetch(`${API_URL}/users`, { headers:{ 'x-admin-key': state.token } })
+    ]);
+    if (aRes.status === 401 || uRes.status === 401) { sessionStorage.clear(); location.reload(); return; }
+    if (aRes.ok) {
+      const a = await aRes.json();
+      state.analytics = { totalUsers: a.totalUsers || 0, activeUsers: a.activeUsers || 0, suspendedUsers: a.suspendedUsers || 0 };
+    }
+    if (uRes.ok) {
+      const raw = await uRes.json();
+      state.users = (Array.isArray(raw) ? raw : []).map((u, i) => ({ uid:i, phone:String(u.phone ?? u.id ?? i), raw:u }));
+    }
+    // track first-seen silently for registration-date fallback
+    let firstSeenChanged = false;
+    state.users.forEach(u => {
+      if (!state.firstSeen[u.phone]) { state.firstSeen[u.phone] = Date.now(); firstSeenChanged = true; }
+    });
+    if (firstSeenChanged) saveJSON(FIRSTSEEN_KEY, state.firstSeen);
+    const phones = new Set(state.users.map(u => u.phone));
+    [...state.selected].forEach(p => { if (!phones.has(p)) state.selected.delete(p); });
+    renderAll();
+    await fetchStatuses(state.users.map(u => u.phone));
+    state.pending.clear();
+    renderAll();
+    updateNotifications();
+    if (showToast) toast('Fleet data refreshed', 'ok', 'Sync complete');
+  } catch (e) {
+    console.error(e);
+    if (retries > 0) { setTimeout(() => { state.busy = false; loadAll(false, retries - 1); }, 1500); return; }
+    toast('Could not reach the server', 'bad', 'Connection error');
+  } finally {
+    state.busy = false;
+    if (ico) ico.classList.remove('spin');
+  }
+}
+async function fetchStatuses(phones) {
+  await Promise.allSettled(phones.map(async phone => {
+    try {
+      const res = await fetch(`${API_URL}/status/${encodeURIComponent(phone)}`);
+      if (!res.ok) return;
+      state.statuses[phone] = await res.json();
+    } catch (_) {}
+  }));
+}
+
+/* ============================================================
+   REGISTRATION DATE  (kept for sorting only — no UI badges)
+   ============================================================ */
+function getRegisteredAt(user) {
+  const r = user.raw || {};
+  const keys = ['createdAt','registeredAt','created_at','registered_at','createdOn','dateRegistered','registrationDate','registered','created','signupDate','signup_at','timestamp'];
+  for (const k of keys) {
+    if (r[k]) { const d = new Date(r[k]); if (!isNaN(d)) return d.getTime(); }
+  }
+  return state.firstSeen[user.phone] || null;
+}
+
+/* ============================================================
+   STATUS & PRIORITY
+   ============================================================ */
+function getStatus(phone) {
+  const s = state.statuses[phone];
+  if (!s) return { key:'unknown', label:'Syncing…', cls:'unk', color:'#94A3B8', days:null };
+  if (s.isSuspended) return { key:'suspended', label:'Suspended', cls:'warn', color:'#F59E0B', days:0 };
+  if (s.isActive) {
+    const d = Number(s.daysRemaining ?? 0);
+    let key='active', cls='ok', color='#10B981';
+    if (d <= ALERT_DAYS) { key='critical'; cls='crit'; color='#DC2626'; }
+    return { key, label:`Active · ${d}d`, cls, color, days:d, isActive:true };
+  }
+  return { key:'expired', label:'Expired', cls:'bad', color:'#F43F5E', days:0 };
+}
+function priorityScore(phone) {
+  const st = getStatus(phone);
+  if (st.key === 'critical') return st.days;
+  if (st.key === 'expired') return 6;
+  if (st.key === 'suspended') return 7;
+  if (st.key === 'unknown') return 100;
+  return 8 + Math.min(90, st.days);
+}
+function isSnoozed(phone) { const t = state.snoozes[phone]; return t && t > Date.now(); }
+function counts() {
+  const c = { all:state.users.length, active:0, critical:0, suspended:0, expired:0, unknown:0, healthy:0, noted:0 };
+  state.users.forEach(u => {
+    const s = getStatus(u.phone);
+    c[s.key]++;
+    if (s.key === 'active' && s.days > 30) c.healthy++;
+    if (state.notes[u.phone]) c.noted++;
+  });
+  return c;
+}
+
+/* ============================================================
+   RENDER
+   ============================================================ */
+function renderAll() {
+  renderStats();
+  renderAlertBanner();
+  renderUsers();
+  renderKanban();
+  renderCalendar();
+  renderActivity();
+  renderCharts();
+  renderDayOfMonthChart();
+  renderHeatmap();
+  renderUrgent();
+}
+function renderStats() {
+  const a = state.analytics;
+  const total = a.totalUsers || state.users.length;
+  const active = a.activeUsers || 0;
+  const susp = a.suspendedUsers || 0;
+  const c = counts();
+  animateNumber('stat-total', total);
+  animateNumber('stat-active', active);
+  animateNumber('stat-suspended', susp);
+  animateNumber('stat-critical', c.critical);
+  const pct = n => total ? Math.round((n / total) * 100) : 0;
+  $('stat-active-pct').textContent = pct(active) + '%';
+  $('side-active').textContent = active;
+  $('side-crit').textContent = c.critical;
+  $('side-susp').textContent = susp;
+  $('side-bar-active').style.width = pct(active) + '%';
+  $('side-bar-crit').style.width = pct(c.critical) + '%';
+  $('side-bar-susp').style.width = pct(susp) + '%';
+  $('nav-users-count').textContent = total;
+}
+function animateNumber(id, target) {
+  const el = $(id); if (!el) return;
+  const start = parseInt(el.textContent.replace(/\D/g,'')) || 0;
+  if (start === target) { el.textContent = target; return; }
+  const dur = 650, t0 = performance.now();
+  const step = now => {
+    const p = Math.min(1, (now - t0) / dur);
+    const eased = 1 - Math.pow(1 - p, 3);
+    el.textContent = Math.round(start + (target - start) * eased);
+    if (p < 1) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
+
+/* ============================================================
+   ALERT BANNER (5-day window)
+   ============================================================ */
+function alertNodes() {
+  return state.users.map(u => ({ u, st: getStatus(u.phone) }))
+    .filter(x => x.st.key === 'critical' && !isSnoozed(x.u.phone))
+    .sort((a,b) => (a.st.days ?? 99) - (b.st.days ?? 99));
+}
+function renderAlertBanner() {
+  const list = alertNodes();
+  const banner = $('alert-banner'); if (!banner) return;
+  if (!list.length) { banner.classList.add('hidden'); return; }
+  banner.classList.remove('hidden');
+  $('alert-count').textContent = list.length;
+  $('alert-nodes').innerHTML = list.slice(0, 8).map(({u, st}) => `
+    <button class="alert-chip" onclick="openDrawer('${esc(u.phone)}')">
+      <span class="mono">${esc(u.phone)}</span> · <span class="opacity-80">${st.days}d</span>
+    </button>`).join('') +
+    (list.length > 8 ? `<span class="alert-chip" style="cursor:default">+${list.length - 8} more…</span>` : '');
+}
+function exportAlertNodes() {
+  const list = alertNodes();
+  if (!list.length) { toast('No alert nodes', 'warn', 'Nothing to export'); return; }
+  const header = 'phone,daysRemaining,expiryDate,note';
+  const rows = list.map(({u, st}) => {
+    const exp = st.days != null && st.days > 0 ? new Date(Date.now() + st.days * 86400000).toISOString().slice(0,10) : '';
+    return `${u.phone},${st.days ?? ''},${exp},"${(state.notes[u.phone] || '').replace(/"/g,'""')}"`;
+  });
+  download(`alert-5day-nodes-${Date.now()}.csv`, [header, ...rows].join('\n'), 'text/csv');
+}
+async function renewAllAlerts() {
+  const list = alertNodes();
+  if (!list.length) return;
+  const phones = list.map(x => x.u.phone);
+  const ok = await confirmDialog({ title:`Renew ${phones.length} alerting node(s)?`,
+    message:'All nodes in the 5-day alert window will be extended by 30 days.',
+    confirmText:'Renew all +30d', danger:false });
+  if (!ok) return;
+  await batchUpdate(phones, { isPaid:true, isSuspended:false, daysToAdd:30 }, 'Bulk renew +30d');
+}
+
+/* ============================================================
+   FILTERS
+   ============================================================ */
+let searchTimer = null;
+function onSearch(v) { clearTimeout(searchTimer); searchTimer = setTimeout(() => { state.query = v; renderUsers(); }, 120); }
+function activeFilterCount() {
+  let n = 0;
+  if (state.query) n++;
+  if (state.filter !== 'all') n++;
+  if (state.plan !== 'all') n++;
+  if (state.daysMin > 0 || state.daysMax < 400) n++;
+  if (!state.includeUnknown) n++;
+  if (!state.includeSuspended) n++;
+  if (state.includeSnoozed) n++;
+  return n;
+}
+function updateFilterCount() {
+  $('filter-count').textContent = activeFilterCount();
+  const active = [];
+  if (state.daysMin > 0 || state.daysMax < 400) active.push(`days ${state.daysMin}–${state.daysMax}`);
+  if (state.plan !== 'all') active.push(`plan ${state.plan}`);
+  if (state.filter !== 'all') active.push(state.filter);
+  const el = $('active-filters');
+  if (active.length) {
+    el.classList.remove('hidden');
+    el.innerHTML = active.map(a => `<span class="ml-1 chip !py-0.5 !px-2 !text-[9px] !border-0" style="background:var(--p-100);color:var(--p-700)">${esc(a)}</span>`).join('');
+  } else el.classList.add('hidden');
+}
+function visibleUsers() {
+  let list = state.users.slice();
+  const q = state.query.trim().toLowerCase();
+  if (q) list = list.filter(u => u.phone.toLowerCase().includes(q));
+  if (state.plan !== 'all') {
+    list = list.filter(u => {
+      const st = getStatus(u.phone);
+      if (st.days == null) return false;
+      if (state.plan === '1') return st.days <= 7;
+      if (state.plan === '30') return st.days > 7 && st.days <= 90;
+      if (state.plan === '365') return st.days > 90;
+      return true;
+    });
+  }
+  list = list.filter(u => {
+    const st = getStatus(u.phone);
+    if (st.days == null) return state.includeUnknown && state.daysMin === 0 && state.daysMax >= 400;
+    if (st.key === 'suspended' && !state.includeSuspended) return false;
+    if (isSnoozed(u.phone) && !state.includeSnoozed) return false;
+    if (st.days < state.daysMin) return false;
+    if (state.daysMax < 400 && st.days > state.daysMax) return false;
+    return true;
+  });
+  if (state.filter !== 'all') {
+    list = list.filter(u => {
+      const st = getStatus(u.phone);
+      if (state.filter === 'healthy') return st.key === 'active' && st.days > 30;
+      if (state.filter === 'noted') return !!state.notes[u.phone];
+      return st.key === state.filter;
+    });
+  }
+  list.sort((a,b) => {
+    const sa = getStatus(a.phone), sb = getStatus(b.phone);
+    switch (state.sort) {
+      case 'priority': return priorityScore(a.phone) - priorityScore(b.phone);
+      case 'days-desc': return (sb.days ?? -1) - (sa.days ?? -1);
+      case 'days-asc':  return (sa.days ?? 99999) - (sb.days ?? 99999);
+      case 'phone':     return a.phone.localeCompare(b.phone, undefined, { numeric:true });
+      case 'phone-desc':return b.phone.localeCompare(a.phone, undefined, { numeric:true });
+      case 'newest': {
+        const ra = getRegisteredAt(a) || 0, rb = getRegisteredAt(b) || 0;
+        return rb - ra;
+      }
+      case 'oldest': {
+        const ra = getRegisteredAt(a) || Infinity, rb = getRegisteredAt(b) || Infinity;
+        return ra - rb;
+      }
+      default: {
+        const order = { critical:0, expired:1, suspended:2, unknown:3, active:4 };
+        return (order[sa.key] - order[sb.key]) || a.phone.localeCompare(b.phone, undefined, { numeric:true });
+      }
+    }
+  });
+  return list;
+}
+function renderUsers() {
+  const list = visibleUsers();
+  const c = counts();
+  $('c-all').textContent = c.all;
+  $('c-active').textContent = c.active;
+  $('c-critical').textContent = c.critical;
+  $('c-suspended').textContent = c.suspended;
+  $('c-expired').textContent = c.expired;
+  $('c-unknown').textContent = c.unknown;
+  $('c-healthy').textContent = c.healthy;
+  $('c-noted').textContent = c.noted;
+  $('result-count').textContent = list.length;
+  updateSortIcons();
+  const grid = $('user-cards');
+  const tableWrap = $('user-table-wrap');
+  const empty = $('empty-state');
+  if (!list.length) {
+    grid.innerHTML = ''; tableWrap.classList.add('hidden'); grid.classList.add('hidden');
+    empty.classList.remove('hidden'); updateBulkBar(); updateFilterCount(); return;
+  }
+  empty.classList.add('hidden');
+  if (state.view === 'grid') {
+    grid.classList.remove('hidden'); tableWrap.classList.add('hidden');
+    grid.innerHTML = list.map((u, i) => userCard(u, i)).join('');
+  } else {
+    grid.classList.add('hidden'); tableWrap.classList.remove('hidden');
+    $('user-table').innerHTML = list.map(u => userRow(u)).join('');
+  }
+  updateBulkBar(); updateFilterCount();
+}
+
+/* Clickable table header sort */
+function toggleSort(col) {
+  if (col === 'days') {
+    if (state.sort === 'days-asc') state.sort = 'days-desc';
+    else state.sort = 'days-asc';
+  } else if (col === 'priority') {
+    state.sort = 'priority';
+  } else if (col === 'registered') {
+    if (state.sort === 'newest') state.sort = 'oldest';
+    else state.sort = 'newest';
+  }
+  const sel = $('sort'); if (sel) sel.value = state.sort;
+  renderUsers();
+}
+function updateSortIcons() {
+  const setIc = (id, up, active) => {
+    const el = $(id); if (!el) return;
+    el.textContent = active ? (up ? '↑' : '↓') : '↕';
+  };
+  setIc('sort-ic-days', state.sort === 'days-asc', state.sort === 'days-asc' || state.sort === 'days-desc');
+  setIc('sort-ic-priority', true, state.sort === 'priority');
+  setIc('sort-ic-registered', state.sort === 'oldest', state.sort === 'newest' || state.sort === 'oldest');
+  document.querySelectorAll('.tbl thead th.sortable').forEach(th => th.classList.remove('sort-active'));
+  if (state.sort === 'days-asc' || state.sort === 'days-desc') document.querySelector('#sort-ic-days')?.closest('th')?.classList.add('sort-active');
+  if (state.sort === 'priority') document.querySelector('#sort-ic-priority')?.closest('th')?.classList.add('sort-active');
+  if (state.sort === 'newest' || state.sort === 'oldest') document.querySelector('#sort-ic-registered')?.closest('th')?.classList.add('sort-active');
+}
+
+function initials(phone) { const digits = phone.replace(/\D/g, ''); return digits.slice(-2) || '##'; }
+function fmtDate(ts) { return new Date(ts).toLocaleDateString(undefined, { month:'short', day:'numeric', year:'numeric' }); }
+function timeAgo(ts) {
+  const diff = Date.now() - ts;
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return 'just now';
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  const days = Math.floor(hrs / 24);
+  return `${days}d ago`;
+}
+function quickAddRow(phone, size = 'sm') {
+  const p = esc(phone);
+  const cls = size === 'lg' ? 'qadd-btn-lg' : 'qadd-btn';
+  const rowCls = size === 'lg' ? 'qadd-row-lg' : 'qadd-row';
+  const presets = size === 'lg' ? [1, 2, 3, 5, 7, 14, 30] : [1, 2, 3, 5, 7, 14];
+  return `
+    <div class="${rowCls}" onclick="event.stopPropagation()">
+      ${presets.map(d => `<button class="${cls}" onclick="quickAddDays('${p}', ${d})" title="Add ${d} day${d===1?'':'s'}">+${d}</button>`).join('')}
+      <button class="${cls} custom" onclick="customAddDays('${p}')" title="Add custom days">⋯</button>
+    </div>`;
+}
+
+function userCard(u, idx) {
+  const st = getStatus(u.phone);
+  const sel = state.selected.has(u.phone);
+  const pending = state.pending.has(u.phone);
+  const pct = st.days != null ? Math.min(100, Math.round((st.days / 365) * 100)) : 0;
+  const p = esc(u.phone);
+  const urgent = st.key === 'critical' && !isSnoozed(u.phone);
+  const snoozed = isSnoozed(u.phone);
+  const note = state.notes[u.phone];
+  const regAt = getRegisteredAt(u);
+  const expiry = st.days != null && st.days > 0 ? fmtDate(Date.now() + st.days * 86400000) : '—';
+
+  return `
+  <article class="ucard ${sel ? 'is-selected' : ''} ${urgent ? 'urgent' : ''} ${pending ? 'pending' : ''}"
+           style="animation-delay:${Math.min(idx * 20, 280)}ms" data-phone="${p}" onclick="openDrawer('${p}')">
+    <div class="flex items-start gap-3 mb-4">
+      <div class="avatar ${st.key === 'suspended' ? 'susp' : st.key === 'expired' ? 'exp' : st.key === 'unknown' ? 'unk' : urgent ? 'crit' : ''}">
+        ${esc(initials(u.phone))}
+      </div>
+      <div class="min-w-0 flex-1">
+        <p class="font-extrabold text-[15px] break-all leading-tight mono" style="color:var(--ink)">${esc(u.phone)}</p>
+        <div class="mt-2 flex items-center gap-1.5 flex-wrap">
+          <span class="pill ${st.cls}"><span class="dot"></span>${esc(st.label)}</span>
+          ${urgent ? `<span class="pill crit" style="animation:blink 1.6s ease-in-out infinite"><span class="dot"></span>Alert</span>` : ''}
+          ${snoozed ? `<span class="pill unk">🔕</span>` : ''}
+        </div>
+        ${note ? `<div class="mt-2"><span class="note-pill" title="${esc(note)}">📝 ${esc(note.slice(0,30))}${note.length>30?'…':''}</span></div>` : ''}
+        ${regAt ? `<p class="text-[10px] font-bold mt-1.5" style="color:var(--muted-2)">Registered ${timeAgo(regAt)}</p>` : ''}
+        ${st.days != null && st.days > 0 ? `<p class="text-[10px] font-bold" style="color:var(--muted-2)">Expires ${expiry}</p>` : ''}
+      </div>
+      <div class="flex flex-col items-end gap-2">
+        <div class="check ${sel ? 'on' : ''}" onclick="event.stopPropagation(); toggleSelect('${p}')" title="Select"></div>
+        ${st.days != null && st.key !== 'suspended' && st.key !== 'expired'
+          ? `<div class="ring" style="--p:${pct};--c:${st.color}"><span>${st.days}d</span></div>` : ''}
+      </div>
+    </div>
+    <div class="mt-auto pt-4 border-t" style="border-color:var(--line)">
+      <div class="qadd-label">
+        <span>＋ Add days</span>
+        <span class="mono" style="color:var(--p-600)">fine-grained</span>
+      </div>
+      ${quickAddRow(u.phone, 'sm')}
+      <div class="relative w-full mb-2.5" onclick="event.stopPropagation()">
+        <select id="plan-${u.uid}"
+          class="w-full appearance-none rounded-xl px-3.5 py-2.5 text-[11px] font-extrabold outline-none cursor-pointer transition"
+          style="background:var(--p-50);border:2px solid var(--line-2);color:var(--ink-3)">
+          <option value="7">⚡ 7 days</option>
+          <option value="30" selected>📅 30 days</option>
+          <option value="90">📆 90 days</option>
+          <option value="365">🎯 365 days</option>
+        </select>
+        <span class="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-[10px]" style="color:var(--muted-2)">▼</span>
+      </div>
+      <div class="grid grid-cols-4 gap-2" onclick="event.stopPropagation()">
+        <button class="btn btn-royal !px-0 !py-2.5 !text-[13px]" onclick="updateUser('${p}')" title="Activate plan">⟳</button>
+        <button class="btn btn-warn !px-0 !py-2.5 !text-[13px]" onclick="suspendUser('${p}')" title="Suspend">⛔</button>
+        <button class="btn btn-dark !px-0 !py-2.5 !text-[13px]" onclick="authorizeUser('${p}')" title="Authorize">✓</button>
+        <button class="btn btn-danger !px-0 !py-2.5 !text-[13px]" onclick="deleteUser('${p}')" title="Delete">🗑</button>
+      </div>
+    </div>
+  </article>`;
+}
+
+function userRow(u) {
+  const st = getStatus(u.phone);
+  const sel = state.selected.has(u.phone);
+  const pending = state.pending.has(u.phone);
+  const p = esc(u.phone);
+  const score = priorityScore(u.phone);
+  const note = state.notes[u.phone];
+  const regAt = getRegisteredAt(u);
+  return `
+  <tr class="${sel ? 'sel' : ''} ${pending ? 'opacity-50' : ''}" data-phone="${p}" onclick="openDrawer('${p}')">
+    <td onclick="event.stopPropagation()"><div class="check ${sel ? 'on' : ''}" onclick="toggleSelect('${p}')"></div></td>
+    <td>
+      <div class="flex items-center gap-3">
+        <div class="avatar ${st.key === 'suspended' ? 'susp' : st.key === 'expired' ? 'exp' : st.key === 'unknown' ? 'unk' : st.key === 'critical' ? 'crit' : ''}"
+             style="width:38px;height:38px;flex:0 0 38px;border-radius:12px;font-size:.72rem">${esc(initials(u.phone))}</div>
+        <div class="min-w-0">
+          <span class="font-extrabold mono text-[13px]" style="color:var(--ink)">${esc(u.phone)}</span>
+          ${note ? `<p class="text-[10px] font-bold" style="color:#B45309">📝 ${esc(note.slice(0,40))}</p>` : ''}
+        </div>
+      </div>
+    </td>
+    <td><span class="pill ${st.cls}"><span class="dot"></span>${esc(st.label)}</span></td>
+    <td><span class="mono font-extrabold" style="color:var(--ink-3)">${st.days != null ? st.days + ' d' : '—'}</span></td>
+    <td><span class="text-[11px] font-extrabold mono" style="color:var(--p-600)">${score}</span></td>
+    <td>
+      <div class="text-xs font-bold" style="color:var(--muted)">${regAt ? timeAgo(regAt) : '—'}</div>
+      ${regAt ? `<div class="text-[10px] mono" style="color:var(--muted-2)">${fmtDate(regAt)}</div>` : ''}
+    </td>
+    <td onclick="event.stopPropagation()">
+      <div class="flex items-center justify-end gap-1.5 flex-wrap">
+        <button class="qadd-btn !w-auto !px-1.5 !py-1 !text-[9px]" onclick="quickAddDays('${p}', 1)" title="+1d">+1</button>
+        <button class="qadd-btn !w-auto !px-1.5 !py-1 !text-[9px]" onclick="quickAddDays('${p}', 5)" title="+5d">+5</button>
+        <button class="qadd-btn !w-auto !px-1.5 !py-1 !text-[9px]" onclick="quickAddDays('${p}', 7)" title="+7d">+7</button>
+        <button class="qadd-btn custom !w-auto !px-1.5 !py-1 !text-[9px]" onclick="customAddDays('${p}')" title="Custom">⋯</button>
+        <button class="icon-btn !w-9 !h-9 !text-[12px]" onclick="updateUser('${p}')" title="Activate plan">⟳</button>
+        <button class="icon-btn !w-9 !h-9 !text-[12px]" onclick="suspendUser('${p}')" title="Suspend">⛔</button>
+        <button class="icon-btn !w-9 !h-9 !text-[12px]" onclick="deleteUser('${p}')" title="Delete">🗑</button>
+      </div>
+    </td>
+  </tr>`;
+}
+
+/* ============================================================
+   KANBAN
+   ============================================================ */
+function renderKanban() {
+  const el = $('kanban'); if (!el) return;
+  const cols = [
+    { key:'critical', label:'Alert ≤5d', dot:'#DC2626', bg:'rgba(220,38,38,.06)' },
+    { key:'expiring', label:'Expiring ≤30d', dot:'#F59E0B', bg:'rgba(245,158,11,.05)' },
+    { key:'active', label:'Active >30d', dot:'#10B981', bg:'rgba(16,185,129,.05)' },
+    { key:'blocked', label:'Blocked / Expired', dot:'#64748B', bg:'rgba(100,116,139,.05)' }
+  ];
+  const buckets = { critical:[], expiring:[], active:[], blocked:[] };
+  state.users.forEach(u => {
+    const st = getStatus(u.phone);
+    if (st.key === 'critical') buckets.critical.push({u, st});
+    else if (st.key === 'active' && st.days <= 30) buckets.expiring.push({u, st});
+    else if (st.key === 'active') buckets.active.push({u, st});
+    else buckets.blocked.push({u, st});
+  });
+  el.innerHTML = cols.map(c => {
+    const list = buckets[c.key].sort((a,b) => (a.st.days ?? 999) - (b.st.days ?? 999));
+    return `
+    <div class="kcol">
+      <div class="kcol-head">
+        <span class="kdot" style="background:${c.dot}"></span>
+        <span class="font-extrabold text-[13px]" style="color:var(--ink)">${c.label}</span>
+        <span class="ml-auto text-[11px] font-extrabold mono px-2 py-0.5 rounded-lg" style="background:${c.bg};color:${c.dot}">${list.length}</span>
+      </div>
+      <div class="kcol-body">
+        ${list.length ? list.map(({u, st}) => {
+          const p = esc(u.phone);
+          const pending = state.pending.has(u.phone);
+          const note = state.notes[u.phone];
+          const snoozed = isSnoozed(u.phone);
+          return `
+          <div class="kcard ${st.key === 'critical' ? 'crit' : ''} ${pending ? 'opacity-50' : ''}" onclick="openDrawer('${p}')">
+            <div class="flex items-center gap-2 mb-1.5">
+              <div class="w-7 h-7 rounded-lg grid place-items-center text-white text-[10px] font-extrabold shrink-0" style="background:${st.color}">${esc(initials(u.phone))}</div>
+              <span class="text-[12px] font-extrabold mono truncate flex-1" style="color:var(--ink)">${esc(u.phone)}</span>
+            </div>
+            <div class="flex items-center gap-1.5 flex-wrap mb-2">
+              ${st.days != null ? `<span class="text-[10px] font-extrabold" style="color:${st.color}">${st.days}d left</span>` : ''}
+              ${snoozed ? `<span class="text-[9px] font-extrabold px-1.5 py-0.5 rounded" style="background:rgba(100,116,139,.15);color:var(--muted)">🔕</span>` : ''}
+              ${note ? `<span class="text-[9px] font-extrabold px-1.5 py-0.5 rounded" style="background:rgba(251,191,36,.15);color:#B45309">📝</span>` : ''}
+            </div>
+            <div class="grid grid-cols-4 gap-1" onclick="event.stopPropagation()">
+              <button class="qadd-btn !w-auto !px-0 !py-1 !text-[9px]" onclick="quickAddDays('${p}', 1)">+1</button>
+              <button class="qadd-btn !w-auto !px-0 !py-1 !text-[9px]" onclick="quickAddDays('${p}', 5)">+5</button>
+              <button class="qadd-btn !w-auto !px-0 !py-1 !text-[9px]" onclick="quickAddDays('${p}', 7)">+7</button>
+              <button class="qadd-btn custom !w-auto !px-0 !py-1 !text-[9px]" onclick="customAddDays('${p}')">⋯</button>
+            </div>
+          </div>`;
+        }).join('') : `<div class="text-center py-8 text-[11px] font-bold" style="color:var(--muted-2)">Empty</div>`}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ============================================================
+   CALENDAR
+   ============================================================ */
+function shiftCalendar(delta) {
+  state.calMonth += delta;
+  if (state.calMonth < 0) { state.calMonth = 11; state.calYear--; }
+  else if (state.calMonth > 11) { state.calMonth = 0; state.calYear++; }
+  renderCalendar();
+}
+function renderCalendar() {
+  const head = $('cal-head'), body = $('cal-body'); if (!head || !body) return;
+  const y = state.calYear, m = state.calMonth;
+  $('cal-month-label').textContent = new Date(y, m, 1).toLocaleDateString(undefined, { month:'long', year:'numeric' });
+  head.innerHTML = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d => `<div class="cal-head">${d}</div>`).join('');
+  const first = new Date(y, m, 1);
+  const startDow = first.getDay();
+  const daysInMonth = new Date(y, m + 1, 0).getDate();
+  const today = new Date(); today.setHours(0,0,0,0);
+  const buckets = {};
+  state.users.forEach(u => {
+    const st = getStatus(u.phone);
+    if (st.days == null || st.key === 'suspended' || st.key === 'unknown') return;
+    const exp = new Date(today.getTime() + st.days * 86400000);
+    exp.setHours(0,0,0,0);
+    const key = exp.toISOString().slice(0,10);
+    (buckets[key] ||= []).push({u, st});
+  });
+  let html = '';
+  for (let i = 0; i < startDow; i++) html += `<div class="cal-cell empty"></div>`;
+  for (let d = 1; d <= daysInMonth; d++) {
+    const cellDate = new Date(y, m, d); cellDate.setHours(0,0,0,0);
+    const key = cellDate.toISOString().slice(0,10);
+    const isToday = cellDate.getTime() === today.getTime();
+    const isPast = cellDate < today;
+    const items = buckets[key] || [];
+    const dots = items.slice(0, 5).map(({st}) => {
+      let color = '#6366F1';
+      if (st.key === 'critical') color = '#DC2626';
+      else if (st.days <= 15) color = '#F59E0B';
+      return `<span class="cal-dot" style="background:${color}"></span>`;
+    }).join('');
+    const more = items.length > 5 ? `<span class="text-[9px] font-extrabold" style="color:var(--muted-2)">+${items.length-5}</span>` : '';
+    const clickable = items.length > 0 ? `onclick="calendarDayClick('${key}')"` : '';
+    html += `
+      <div class="cal-cell ${isToday ? 'today' : ''} ${isPast ? 'past' : ''}" ${clickable}>
+        <span class="cal-num">${d}</span>
+        ${items.length ? `<span class="text-[10px] font-extrabold mono mt-auto" style="color:${items.some(x=>x.st.key==='critical') ? '#DC2626' : 'var(--ink-3)'}">${items.length}</span>` : ''}
+        <div class="cal-dots">${dots}${more}</div>
+      </div>`;
+  }
+  body.innerHTML = html;
+}
+function calendarDayClick(key) {
+  const target = new Date(key + 'T00:00:00');
+  const today = new Date(); today.setHours(0,0,0,0);
+  const diff = Math.round((target.getTime() - today.getTime()) / 86400000);
+  switchView('users');
+  setDaysRange(diff, diff);
+  toast(`Filtered to nodes expiring ${target.toLocaleDateString(undefined,{month:'short',day:'numeric'})}`, 'info', 'Filter applied');
+}
+
+/* ============================================================
+   CHARTS
+   ============================================================ */
+function renderCharts() {
+  if (typeof Chart === 'undefined') return;
+  const total = state.analytics.totalUsers || state.users.length;
+  const active = state.analytics.activeUsers || 0;
+  const susp = state.analytics.suspendedUsers || 0;
+  const c = counts();
+  const expired = Math.max(0, total - active - susp);
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const tickColor = isDark ? '#94A3B8' : '#64748B';
+  const gridColor = isDark ? 'rgba(255,255,255,.06)' : 'rgba(15,23,42,.06)';
+  Chart.defaults.font.family = "'Plus Jakarta Sans',system-ui,sans-serif";
+  Chart.defaults.font.weight = 700;
+  Chart.defaults.color = tickColor;
+
+  const ctxStatus = $('chartStatus');
+  if (ctxStatus) {
+    if (state.charts.status) state.charts.status.destroy();
+    state.charts.status = new Chart(ctxStatus, {
+      type:'doughnut',
+      data:{ labels:['Active','Alert ≤5d','Suspended','Expired'],
+        datasets:[{ data:[Math.max(0,active - c.critical), c.critical, susp, expired],
+          backgroundColor:['#10B981','#DC2626','#F59E0B','#F43F5E'],
+          borderWidth:0, hoverOffset:10, spacing:2 }] },
+      options:{ responsive:true, maintainAspectRatio:false, cutout:'72%',
+        plugins:{ legend:{ position:'bottom', labels:{ padding:14, usePointStyle:true, pointStyle:'circle', font:{ size:11, weight:700 } } } } }
+    });
+  }
+  const buckets = { '0-5d':0,'6-7d':0,'8-30d':0,'31-90d':0,'90d+':0 };
+  state.users.forEach(u => {
+    const st = getStatus(u.phone);
+    if (st.key === 'suspended' || st.key === 'unknown' || st.days == null) return;
+    if (st.days <= 5) buckets['0-5d']++;
+    else if (st.days <= 7) buckets['6-7d']++;
+    else if (st.days <= 30) buckets['8-30d']++;
+    else if (st.days <= 90) buckets['31-90d']++;
+    else buckets['90d+']++;
+  });
+  const ctxBuckets = $('chartBuckets');
+  if (ctxBuckets) {
+    if (state.charts.buckets) state.charts.buckets.destroy();
+    state.charts.buckets = new Chart(ctxBuckets, {
+      type:'bar',
+      data:{ labels:Object.keys(buckets),
+        datasets:[{ data:Object.values(buckets),
+          backgroundColor:['#DC2626','#F87171','#FBBF24','#34D399','#06B6D4'],
+          borderRadius:10, borderSkipped:false, barThickness:36 }] },
+      options:{ responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{ display:false } },
+        scales:{ x:{ grid:{ display:false }, ticks:{ font:{ size:11, weight:700 } } },
+          y:{ beginAtZero:true, grid:{ color:gridColor }, ticks:{ precision:0, font:{ size:11, weight:700 } }, border:{ display:false } } } }
+    });
+  }
+  const planData = { 'Trial ≤7d':0,'Monthly 8–90d':0,'Annual 90d+':0 };
+  state.users.forEach(u => {
+    const st = getStatus(u.phone);
+    if (st.days == null) return;
+    if (st.days <= 7) planData['Trial ≤7d']++;
+    else if (st.days <= 90) planData['Monthly 8–90d']++;
+    else planData['Annual 90d+']++;
+  });
+  const ctxPlan = $('chartPlan');
+  if (ctxPlan) {
+    if (state.charts.plan) state.charts.plan.destroy();
+    state.charts.plan = new Chart(ctxPlan, {
+      type:'polarArea',
+      data:{ labels:Object.keys(planData),
+        datasets:[{ data:Object.values(planData),
+          backgroundColor:['rgba(244,63,94,.75)','rgba(99,102,241,.75)','rgba(6,182,212,.75)'], borderWidth:0 }] },
+      options:{ responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{ position:'bottom', labels:{ padding:12, usePointStyle:true, pointStyle:'circle', font:{ size:11, weight:700 } } } },
+        scales:{ r:{ grid:{ color:gridColor }, ticks:{ display:false }, angleLines:{ color:gridColor } } } }
+    });
+  }
+  renderTimeline();
+}
+
+function buildDayOfMonthData() {
+  const buckets = new Array(32).fill(0);
+  const range = state.calendarRange;
+  const limitDays = range === 'all' ? Infinity : parseInt(range);
+  state.users.forEach(u => {
+    const st = getStatus(u.phone);
+    if (st.key === 'suspended' || st.key === 'unknown' || st.days == null || st.days < 0) return;
+    if (st.days > limitDays) return;
+    const exp = new Date(Date.now() + st.days * 86400000);
+    const dom = exp.getDate();
+    buckets[dom]++;
+  });
+  const labels = [], data = [];
+  for (let d = 1; d <= 31; d++) { labels.push(String(d)); data.push(buckets[d]); }
+  return { labels, data, buckets };
+}
+function renderDayOfMonthChart() {
+  if (typeof Chart === 'undefined') return;
+  const { labels, data } = buildDayOfMonthData();
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const tickColor = isDark ? '#94A3B8' : '#64748B';
+  const gridColor = isDark ? 'rgba(255,255,255,.06)' : 'rgba(15,23,42,.06)';
+  const maxVal = Math.max(1, ...data);
+  const bg = data.map(v => {
+    if (v === 0) return isDark ? 'rgba(255,255,255,.04)' : 'rgba(15,23,42,.05)';
+    const ratio = v / maxVal;
+    if (ratio > 0.8) return '#DC2626';
+    if (ratio > 0.6) return '#F87171';
+    if (ratio > 0.4) return '#FBBF24';
+    if (ratio > 0.2) return '#818CF8';
+    return '#6366F1';
+  });
+  const ctx = $('chartCalendar'); if (!ctx) return;
+  if (state.charts.calendar) state.charts.calendar.destroy();
+  state.charts.calendar = new Chart(ctx, {
+    type:'bar',
+    data:{ labels,
+      datasets:[{ label:'Nodes expiring', data, backgroundColor:bg,
+        hoverBackgroundColor: bg.map(c => c + 'dd'),
+        borderRadius:7, borderSkipped:false, maxBarThickness:44 }] },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{
+        legend:{ display:false },
+        tooltip:{
+          callbacks:{
+            title:items => {
+              const d = parseInt(items[0].label);
+              const suffix = d === 1 ? 'st' : d === 2 ? 'nd' : d === 3 ? 'rd' : 'th';
+              return `${d}${suffix} of month`;
+            },
+            label:c => `${c.parsed.y} node${c.parsed.y === 1 ? '' : 's'} expiring on this day-of-month`
+          }
+        }
+      },
+      scales:{
+        x:{ grid:{ display:false }, ticks:{ font:{ size:10, weight:700 }, maxRotation:0, autoSkip:false },
+          title:{ display:true, text:'Day of month', font:{ size:11, weight:800 }, color:tickColor } },
+        y:{ beginAtZero:true, grid:{ color:gridColor }, ticks:{ precision:0, font:{ size:11, weight:700 } }, border:{ display:false },
+          title:{ display:true, text:'Nodes expiring', font:{ size:11, weight:800 }, color:tickColor } }
+      },
+      onClick:(evt, elements) => {
+        if (!elements.length) return;
+        const dom = parseInt(labels[elements[0].index]);
+        filterByDayOfMonth(dom);
+      }
+    }
+  });
+  const totalInScope = data.reduce((a,b) => a + b, 0);
+  let peakDay = 1, peakCount = 0;
+  data.forEach((v, i) => { if (v > peakCount) { peakCount = v; peakDay = i + 1; } });
+  const todayDom = new Date().getDate();
+  const todayCount = data[todayDom - 1] || 0;
+  const first10 = data.slice(0, 10).reduce((a,b) => a + b, 0);
+  const last10 = data.slice(21, 31).reduce((a,b) => a + b, 0);
+  $('calday-summary').innerHTML = `
+    <div class="rounded-2xl p-4" style="background:linear-gradient(135deg,rgba(220,38,38,.08),rgba(244,63,94,.05));border:1px solid rgba(220,38,38,.2)">
+      <p class="text-[10px] font-extrabold uppercase tracking-[.14em]" style="color:var(--bad)">Peak day</p>
+      <p class="text-2xl font-extrabold mono mt-1" style="color:#DC2626">${peakCount}</p>
+      <p class="text-[10px] font-bold mt-0.5" style="color:var(--muted-2)">on the ${peakDay}${peakDay===1?'st':peakDay===2?'nd':peakDay===3?'rd':'th'}</p>
+    </div>
+    <div class="rounded-2xl p-4" style="background:linear-gradient(135deg,rgba(245,158,11,.08),rgba(251,146,60,.05));border:1px solid rgba(245,158,11,.2)">
+      <p class="text-[10px] font-extrabold uppercase tracking-[.14em]" style="color:#B45309">Today (${todayDom}th)</p>
+      <p class="text-2xl font-extrabold mono mt-1" style="color:#D97706">${todayCount}</p>
+    </div>
+    <div class="rounded-2xl p-4" style="background:linear-gradient(135deg,rgba(99,102,241,.08),rgba(139,92,246,.05));border:1px solid rgba(99,102,241,.2)">
+      <p class="text-[10px] font-extrabold uppercase tracking-[.14em]" style="color:var(--p-700)">Days 1–10</p>
+      <p class="text-2xl font-extrabold mono mt-1" style="color:var(--p-600)">${first10}</p>
+    </div>
+    <div class="rounded-2xl p-4" style="background:linear-gradient(135deg,rgba(6,182,212,.08),rgba(14,165,233,.05));border:1px solid rgba(6,182,212,.2)">
+      <p class="text-[10px] font-extrabold uppercase tracking-[.14em]" style="color:#0E7490">Total (${totalInScope})</p>
+      <p class="text-2xl font-extrabold mono mt-1" style="color:#0891B2">${last10} <span class="text-[10px] font-bold" style="color:var(--muted-2)">last 10d</span></p>
+    </div>`;
+}
+function filterByDayOfMonth(dom) {
+  switchView('users');
+  toast(`Day-of-month: nodes expiring on the ${dom}${dom===1?'st':dom===2?'nd':dom===3?'rd':'th'}`, 'info', 'Filter hint');
+}
+function exportCalendar() {
+  const { data } = buildDayOfMonthData();
+  const header = 'dayOfMonth,nodesExpiring';
+  const rows = data.map((v, i) => `${i + 1},${v}`);
+  const total = data.reduce((a,b) => a + b, 0);
+  rows.push(`TOTAL,${total}`);
+  download(`expirations-by-day-of-month-${Date.now()}.csv`, [header, ...rows].join('\n'), 'text/csv');
+}
+function renderTimeline() {
+  const days = state.timelineRange;
+  const labels = [], data = [];
+  for (let i = 0; i < days; i++) {
+    const d = new Date(Date.now() + i * 86400000);
+    labels.push(d.toLocaleDateString(undefined, { month:'short', day:'numeric' }));
+    data.push(state.users.filter(u => {
+      const st = getStatus(u.phone);
+      if (st.key === 'suspended' || st.key === 'unknown' || st.days == null) return false;
+      return Math.round(st.days) === i;
+    }).length);
+  }
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const gridColor = isDark ? 'rgba(255,255,255,.06)' : 'rgba(15,23,42,.06)';
+  const ctx = $('chartTimeline'); if (!ctx) return;
+  if (state.charts.timeline) state.charts.timeline.destroy();
+  const grad = ctx.getContext('2d').createLinearGradient(0,0,0,220);
+  grad.addColorStop(0,'rgba(99,102,241,.5)');
+  grad.addColorStop(1,'rgba(99,102,241,0)');
+  state.charts.timeline = new Chart(ctx, {
+    type:'line',
+    data:{ labels, datasets:[{ data, fill:true, backgroundColor:grad,
+      borderColor:'#6366F1', borderWidth:2.5, tension:.4,
+      pointRadius:3, pointHoverRadius:6,
+      pointBackgroundColor:'#6366F1', pointBorderColor:'#fff', pointBorderWidth:2 }] },
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ display:false }, tooltip:{ callbacks:{ label:c => `${c.parsed.y} node(s)` } } },
+      scales:{ x:{ grid:{ display:false }, ticks:{ font:{ size:10, weight:700 }, maxRotation:0, autoSkip:true } },
+        y:{ beginAtZero:true, grid:{ color:gridColor }, ticks:{ precision:0, font:{ size:11, weight:700 } }, border:{ display:false } } } }
+  });
+}
+
+/* ============================================================
+   HEATMAP & URGENT
+   ============================================================ */
+function renderHeatmap() {
+  const el = $('heatmap'); if (!el) return;
+  const buckets = {};
+  state.users.forEach(u => {
+    const st = getStatus(u.phone);
+    if (st.key === 'suspended' || st.key === 'unknown' || st.days == null) return;
+    const d = Math.round(st.days);
+    if (d >= 0 && d < 90) buckets[d] = (buckets[d] || 0) + 1;
+  });
+  let html = '';
+  for (let i = 0; i < 90; i++) {
+    const n = buckets[i] || 0;
+    const level = n === 0 ? 0 : n === 1 ? 1 : n <= 3 ? 2 : n <= 6 ? 3 : n <= 10 ? 4 : 5;
+    const date = new Date(Date.now() + i * 86400000);
+    const tip = `${date.toLocaleDateString(undefined,{month:'short',day:'numeric'})} · ${n} node${n===1?'':'s'}`;
+    html += `<div class="heat-cell" data-n="${level}" data-tip="${esc(tip)}" onclick="filterByDay(${i})"></div>`;
+  }
+  el.innerHTML = html;
+}
+function filterByDay(days) { switchView('users'); setDaysRange(days, days); }
+function renderUrgent() {
+  const el = $('urgent-list'); if (!el) return;
+  const urgents = state.users.map(u => ({ u, st: getStatus(u.phone) }))
+    .filter(x => x.st.key === 'critical' && !isSnoozed(x.u.phone))
+    .sort((a,b) => (a.st.days ?? 99) - (b.st.days ?? 99)).slice(0, 12);
+  if (!urgents.length) {
+    el.innerHTML = `
+      <div class="text-center py-8">
+        <div class="w-14 h-14 rounded-2xl mx-auto grid place-items-center text-2xl mb-3" style="background:var(--ok-soft)">✨</div>
+        <p class="font-extrabold text-sm" style="color:var(--ink)">All clear</p>
+        <p class="text-xs font-semibold mt-1" style="color:var(--muted-2)">No nodes in the 5-day alert window</p>
+      </div>`;
+    return;
+  }
+  el.innerHTML = urgents.map(({u, st}) => `
+    <div class="flex items-center gap-2 p-2.5 rounded-xl" style="background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.2)">
+      <button onclick="openDrawer('${esc(u.phone)}')" class="flex items-center gap-3 flex-1 min-w-0 text-left">
+        <div class="w-8 h-8 rounded-lg grid place-items-center text-white text-[10px] font-extrabold shrink-0" style="background:${st.color}">${esc(initials(u.phone))}</div>
+        <div class="min-w-0 flex-1">
+          <p class="text-[12px] font-extrabold mono truncate" style="color:var(--ink)">${esc(u.phone)}</p>
+          <p class="text-[10px] font-bold" style="color:${st.color}">${st.days}d left · alert active</p>
+        </div>
+      </button>
+      <div class="flex gap-1">
+        <button class="qadd-btn !w-auto !px-1.5 !py-1 !text-[9px]" onclick="quickAddDays('${esc(u.phone)}', 1)" title="+1d">+1</button>
+        <button class="qadd-btn !w-auto !px-1.5 !py-1 !text-[9px]" onclick="quickAddDays('${esc(u.phone)}', 5)" title="+5d">+5</button>
+      </div>
+    </div>`).join('');
+}
+
+/* ============================================================
+   FILTER HANDLERS
+   ============================================================ */
+function toggleFilterPanel() {
+  const el = $('filter-panel');
+  el.classList.toggle('open');
+  $('filter-toggle').classList.toggle('btn-royal', el.classList.contains('open'));
+}
+function onDaysRange() {
+  let min = parseInt($('days-min').value);
+  let max = parseInt($('days-max').value);
+  if (min > max) { [min,max] = [max,min]; $('days-min').value = min; $('days-max').value = max; }
+  state.daysMin = min; state.daysMax = max;
+  $('range-fill').style.left = (min / 400 * 100) + '%';
+  $('range-fill').style.right = (100 - (max / 400 * 100)) + '%';
+  $('days-label').textContent = `${min} – ${max}${max >= 400 ? '+' : ''}d`;
+  $('days-range-text').textContent = min === 0 && max >= 400 ? 'any remaining days' : `between ${min} and ${max}${max >= 400 ? '+' : ''} days`;
+  renderUsers();
+}
+function setDaysRange(min, max) { $('days-min').value = min; $('days-max').value = max; onDaysRange(); }
+function setPlanFilter(plan) {
+  state.plan = plan;
+  document.querySelectorAll('#plan-filters .chip').forEach(c => c.classList.toggle('active', c.dataset.plan === plan));
+  renderUsers();
+}
+function setFilter(f) {
+  state.filter = f;
+  document.querySelectorAll('#filter-chips .chip').forEach(c => c.classList.toggle('active', c.dataset.filter === f));
+  renderUsers();
+}
+function resetFilters() {
+  state.query=''; state.filter='all'; state.plan='all';
+  state.daysMin=0; state.daysMax=400;
+  state.includeUnknown=true; state.includeSuspended=true; state.includeSnoozed=false;
+  $('search').value='';
+  $('days-min').value=0; $('days-max').value=400;
+  $('inc-unknown').checked=true; $('inc-suspended').checked=true; $('inc-snoozed').checked=false;
+  $('days-label').textContent = '0 – 400+';
+  $('range-fill').style.left = '0%'; $('range-fill').style.right = '0%';
+  $('days-range-text').textContent = 'any remaining days';
+  document.querySelectorAll('#filter-chips .chip').forEach(c => c.classList.toggle('active', c.dataset.filter === 'all'));
+  document.querySelectorAll('#plan-filters .chip').forEach(c => c.classList.toggle('active', c.dataset.plan === 'all'));
+  renderUsers();
+}
+function quickPreset(type) {
+  switchView('users');
+  if (type === 'alerts') { setDaysRange(0, ALERT_DAYS); setFilter('all'); }
+  if (type === 'critical') { setDaysRange(0, 3); setFilter('all'); }
+  if (type === 'expiring') { setDaysRange(0, 30); setFilter('all'); }
+  $('filter-panel').classList.add('open');
+}
+function setView(v) {
+  state.view = v;
+  $('vt-grid').classList.toggle('on', v === 'grid');
+  $('vt-list').classList.toggle('on', v === 'list');
+  renderUsers();
+}
+
+/* ============================================================
+   SELECTION
+   ============================================================ */
+function toggleSelect(phone) {
+  if (state.selected.has(phone)) state.selected.delete(phone);
+  else state.selected.add(phone);
+  renderUsers();
+}
+function toggleSelectAll() {
+  const list = visibleUsers();
+  const allSelected = list.length > 0 && list.every(u => state.selected.has(u.phone));
+  if (allSelected) list.forEach(u => state.selected.delete(u.phone));
+  else list.forEach(u => state.selected.add(u.phone));
+  renderUsers();
+}
+function clearSelection() { state.selected.clear(); renderUsers(); }
+function updateBulkBar() {
+  const n = state.selected.size;
+  $('bulk-count').textContent = n;
+  $('bulkbar').classList.toggle('show', n > 0);
+  const list = visibleUsers();
+  const allSelected = list.length > 0 && list.every(u => state.selected.has(u.phone));
+  const btn = $('select-all-btn');
+  if (btn) btn.textContent = allSelected ? '☐ Deselect all' : '☑ Select all';
+  $('clear-sel').classList.toggle('hidden', n === 0);
+}
+
+/* ============================================================
+   ACTIONS
+   ============================================================ */
+async function putStatus(phone, payload) {
+  const res = await fetch(`${API_URL}/status/${encodeURIComponent(phone)}`, {
+    method:'PUT',
+    headers:{ 'Content-Type':'application/json', 'x-admin-key': state.token },
+    body: JSON.stringify(payload)
+  });
+  if (!res.ok) throw new Error('Request failed');
+  return res;
+}
+async function optimisticUpdate(phone, payload, { label='Update', color='ok' } = {}) {
+  const prevStatus = state.statuses[phone] ? JSON.parse(JSON.stringify(state.statuses[phone])) : null;
+  const prevSnooze = state.snoozes[phone];
+  state.pending.add(phone);
+  const existing = state.statuses[phone] || {};
+  const newStatus = { ...existing };
+  if (payload.isSuspended === true) { newStatus.isSuspended = true; newStatus.isActive = false; }
+  else if (payload.isPaid === true && payload.isSuspended === false) {
+    newStatus.isSuspended = false; newStatus.isActive = true; newStatus.isPaid = true;
+    if (payload.daysToAdd > 0) newStatus.daysRemaining = (existing.daysRemaining || 0) + payload.daysToAdd;
+  } else if (payload.isPaid === false && payload.isSuspended === false) {
+    newStatus.isPaid = false; newStatus.isActive = false; newStatus.daysRemaining = 0;
+  }
+  state.statuses[phone] = newStatus;
+  renderUsers(); renderKanban(); renderStats(); renderAlertBanner(); renderUrgent();
+  try {
+    await putStatus(phone, payload);
+    state.pending.delete(phone);
+    logActivity(`${label} · ${phone}`, color);
+    state.lastAction = { type:'single', phone, prevStatus, prevSnooze };
+    return true;
+  } catch (e) {
+    if (prevStatus) state.statuses[phone] = prevStatus;
+    state.pending.delete(phone);
+    toast(`${label} failed for ${phone}`, 'bad', 'Rolled back');
+    renderUsers(); renderKanban();
+    return false;
+  }
+}
+
+async function quickAddDays(phone, days) {
+  days = parseInt(days);
+  if (!days || days < 1) { toast('Enter a valid number of days', 'warn', 'Invalid input'); return; }
+  const ok = await optimisticUpdate(phone, { isPaid:true, isSuspended:false, daysToAdd:days }, { label:`+${days}d` });
+  if (ok) {
+    toast(`${phone} +${days} day${days===1?'':'s'}`, 'ok', `Extended by ${days}d`, {
+      label:'Undo', action: () => revertLastAction()
+    });
+    loadAll();
+  }
+}
+async function customAddDays(phone) {
+  const days = await promptDays(phone);
+  if (!days) return;
+  await quickAddDays(phone, days);
+}
+function promptDays(phone) {
+  return new Promise(resolve => {
+    modalResolve = null;
+    $('modal-box').innerHTML = `
+      <div class="flex items-start gap-4 mb-5">
+        <div class="w-12 h-12 rounded-2xl grid place-items-center text-xl shrink-0" style="background:var(--p-50);color:var(--p-600)">＋</div>
+        <div class="min-w-0">
+          <h3 class="font-extrabold tracking-tight text-lg leading-tight" style="color:var(--ink)">Add custom days</h3>
+          <p class="text-sm font-semibold mt-1 mono break-all" style="color:var(--muted)">${esc(phone)}</p>
+        </div>
+      </div>
+      <label class="block text-[10px] font-extrabold uppercase tracking-[.14em] mb-2" style="color:var(--muted-2)">Number of days to add</label>
+      <input id="pd-input" type="number" min="1" max="3650" value="5" class="prompt-input" autocomplete="off">
+      <div class="prompt-presets">
+        ${[1,2,3,5,7,14,30,90].map(d => `<button class="prompt-preset" data-d="${d}" onclick="document.getElementById('pd-input').value=${d};document.querySelectorAll('.prompt-preset').forEach(b=>b.classList.toggle('on',+b.dataset.d===${d}))">${d}d</button>`).join('')}
+      </div>
+      <div class="flex gap-2.5 mt-5">
+        <button class="btn btn-ghost flex-1 !py-3" onclick="resolvePromptDays(null)">Cancel</button>
+        <button class="btn btn-royal flex-1 !py-3" onclick="resolvePromptDays(parseInt(document.getElementById('pd-input').value))">＋ Add days</button>
+      </div>`;
+    $('modal-backdrop').classList.add('show');
+    setTimeout(() => {
+      const inp = $('pd-input');
+      if (inp) { inp.focus(); inp.select(); inp.addEventListener('keydown', e => {
+        if (e.key === 'Enter') { e.preventDefault(); resolvePromptDays(parseInt(inp.value)); }
+      }); }
+      document.querySelector('.prompt-preset[data-d="5"]')?.classList.add('on');
+    }, 80);
+    window.resolvePromptDays = (v) => {
+      $('modal-backdrop').classList.remove('show');
+      window.resolvePromptDays = null;
+      resolve(v && v > 0 ? v : null);
+    };
+  });
+}
+
+async function bulkAddDays(days) {
+  const phones = [...state.selected];
+  if (!phones.length) return;
+  const ok = await confirmDialog({
+    title:`Add ${days} day(s) to ${phones.length} node(s)?`,
+    message:`All selected nodes will be extended by ${days} day(s). Expired nodes will be reactivated.`,
+    confirmText:`Add +${days}d`, danger:false
+  });
+  if (!ok) return;
+  const succeeded = await runBatchProgress(
+    phones,
+    phone => putStatus(phone, { isPaid:true, isSuspended:false, daysToAdd:days }),
+    `Adding +${days}d to ${phones.length} node(s)`
+  );
+  logActivity(`Bulk +${days}d · ${succeeded}/${phones.length} succeeded`, 'ok');
+  toast(`+${days}d applied · ${succeeded}/${phones.length}`, 'ok', 'Bulk increment');
+  state.selected.clear();
+  await loadAll();
+}
+async function bulkAddDaysCustom() {
+  const phones = [...state.selected];
+  if (!phones.length) return;
+  const days = await promptDaysCustom(phones.length);
+  if (!days) return;
+  const ok = await confirmDialog({
+    title:`Add ${days} day(s) to ${phones.length} node(s)?`,
+    message:`All selected nodes will be extended by ${days} day(s).`,
+    confirmText:`Add +${days}d`, danger:false
+  });
+  if (!ok) return;
+  const succeeded = await runBatchProgress(
+    phones,
+    phone => putStatus(phone, { isPaid:true, isSuspended:false, daysToAdd:days }),
+    `Adding +${days}d to ${phones.length} node(s)`
+  );
+  logActivity(`Bulk +${days}d · ${succeeded}/${phones.length} succeeded`, 'ok');
+  toast(`+${days}d applied · ${succeeded}/${phones.length}`, 'ok', 'Bulk increment');
+  state.selected.clear();
+  await loadAll();
+}
+function promptDaysCustom(count) {
+  return new Promise(resolve => {
+    $('modal-box').innerHTML = `
+      <div class="flex items-start gap-4 mb-5">
+        <div class="w-12 h-12 rounded-2xl grid place-items-center text-xl shrink-0" style="background:var(--p-50);color:var(--p-600)">＋</div>
+        <div class="min-w-0">
+          <h3 class="font-extrabold tracking-tight text-lg leading-tight" style="color:var(--ink)">Add custom days</h3>
+          <p class="text-sm font-semibold mt-1" style="color:var(--muted)"><span class="mono font-extrabold" style="color:var(--p-600)">${count}</span> node(s) selected</p>
+        </div>
+      </div>
+      <label class="block text-[10px] font-extrabold uppercase tracking-[.14em] mb-2" style="color:var(--muted-2)">Number of days to add</label>
+      <input id="pd-input" type="number" min="1" max="3650" value="5" class="prompt-input" autocomplete="off">
+      <div class="prompt-presets">
+        ${[1,2,3,5,7,14,30,90].map(d => `<button class="prompt-preset" data-d="${d}" onclick="document.getElementById('pd-input').value=${d};document.querySelectorAll('.prompt-preset').forEach(b=>b.classList.toggle('on',+b.dataset.d===${d}))">${d}d</button>`).join('')}
+      </div>
+      <div class="flex gap-2.5 mt-5">
+        <button class="btn btn-ghost flex-1 !py-3" onclick="resolvePromptCustom(null)">Cancel</button>
+        <button class="btn btn-royal flex-1 !py-3" onclick="resolvePromptCustom(parseInt(document.getElementById('pd-input').value))">Continue</button>
+      </div>`;
+    $('modal-backdrop').classList.add('show');
+    setTimeout(() => { $('pd-input').focus(); $('pd-input').select(); document.querySelector('.prompt-preset[data-d="5"]')?.classList.add('on'); }, 80);
+    window.resolvePromptCustom = (v) => {
+      $('modal-backdrop').classList.remove('show');
+      window.resolvePromptCustom = null;
+      resolve(v && v > 0 ? v : null);
+    };
+  });
+}
+
+async function updateUser(phone) {
+  const sel = document.getElementById(`plan-${uidOf(phone)}`);
+  const days = sel ? parseInt(sel.value) : 30;
+  const ok = await optimisticUpdate(phone, { isPaid:true, isSuspended:false, daysToAdd:days }, { label:`+${days}d` });
+  if (ok) {
+    toast(`${phone} activated +${days} days`, 'ok', 'Node updated', { label:'Undo', action: () => revertLastAction() });
+    loadAll();
+  }
+}
+async function suspendUser(phone) {
+  const ok = await confirmDialog({ title:'Suspend node?', message:`Node ${phone} will be blocked immediately.`, confirmText:'Suspend', danger:true });
+  if (!ok) return;
+  const done = await optimisticUpdate(phone, { isPaid:false, isSuspended:true, daysToAdd:0 }, { label:'Suspended', color:'warn' });
+  if (done) { toast(`${phone} suspended`, 'warn', 'Node blocked', { label:'Undo', action: () => revertLastAction() }); loadAll(); }
+}
+async function authorizeUser(phone) {
+  const ok = await confirmDialog({ title:'Authorize node?', message:`Node ${phone} will be reactivated.`, confirmText:'Authorize', danger:false });
+  if (!ok) return;
+  const done = await optimisticUpdate(phone, { isPaid:true, isSuspended:false, daysToAdd:0 }, { label:'Authorized' });
+  if (done) { toast(`${phone} authorized`, 'ok', 'Reactivated', { label:'Undo', action: () => revertLastAction() }); loadAll(); }
+}
+async function deleteUser(phone) {
+  const ok = await confirmDialog({ title:'Delete node permanently?', message:`This will erase ${phone}. Cannot be undone.`, confirmText:'Delete forever', danger:true });
+  if (!ok) return;
+  try {
+    const res = await fetch(`${API_URL}/users/${encodeURIComponent(phone)}`, { method:'DELETE', headers:{ 'x-admin-key': state.token } });
+    if (!res.ok) throw new Error();
+    state.selected.delete(phone);
+    logActivity(`Deleted ${phone}`, 'bad');
+    toast(`${phone} deleted`, 'bad', 'Node removed');
+    closeDrawer();
+    await loadAll();
+  } catch (e) { toast('Delete failed', 'bad', 'Request error'); }
+}
+function revertLastAction() {
+  const a = state.lastAction;
+  if (!a) { toast('Nothing to undo', 'warn', 'Undo'); return; }
+  if (a.prevStatus) state.statuses[a.phone] = a.prevStatus;
+  if (a.prevSnooze !== undefined) {
+    if (a.prevSnooze) state.snoozes[a.phone] = a.prevSnooze;
+    else delete state.snoozes[a.phone];
+    saveJSON(SNOOZE_KEY, state.snoozes);
+  }
+  state.lastAction = null;
+  renderAll();
+  toast('Reverted last action', 'info', 'Undo');
+}
+
+async function bulkAction(kind) {
+  const phones = [...state.selected];
+  if (!phones.length) return;
+  if (kind === 'snooze') {
+    const ok = await confirmDialog({ title:`Snooze ${phones.length} alert(s)?`, message:'Alerts muted for 24 hours.', confirmText:'Snooze 24h', danger:false });
+    if (!ok) return;
+    phones.forEach(p => state.snoozes[p] = Date.now() + 86400000);
+    saveJSON(SNOOZE_KEY, state.snoozes);
+    logActivity(`Snoozed ${phones.length} node(s)`, 'warn');
+    toast(`${phones.length} node(s) snoozed`, 'warn', 'Snoozed');
+    state.selected.clear(); renderAll();
+    return;
+  }
+  const labels = {
+    authorize:{ t:'Authorize', m:`Reactivate ${phones.length} node(s)?`, d:false },
+    suspend:{ t:'Suspend', m:`Suspend ${phones.length} node(s)?`, d:true },
+    delete:{ t:'Delete', m:`Delete ${phones.length} node(s)? Cannot be undone.`, d:true }
+  };
+  const L = labels[kind];
+  const ok = await confirmDialog({ title:`${L.t} ${phones.length} node(s)?`, message:L.m, confirmText:L.t, danger:L.d });
+  if (!ok) return;
+  const payloads = {
+    authorize:{ isPaid:true, isSuspended:false, daysToAdd:0 },
+    suspend:{ isPaid:false, isSuspended:true, daysToAdd:0 }
+  };
+  if (kind === 'delete') {
+    await runBatchProgress(phones, async phone => {
+      const r = await fetch(`${API_URL}/users/${encodeURIComponent(phone)}`, { method:'DELETE', headers:{ 'x-admin-key': state.token } });
+      if (!r.ok) throw new Error();
+    }, `Deleting ${phones.length} node(s)`);
+    logActivity(`Bulk delete · ${phones.length}`, 'bad');
+    toast(`${phones.length} node(s) deleted`, 'bad', 'Bulk delete');
+    state.selected.clear();
+    await loadAll();
+    return;
+  }
+  const payload = payloads[kind];
+  const succeeded = await runBatchProgress(phones, phone => putStatus(phone, payload), `${L.t} ${phones.length} node(s)`);
+  logActivity(`Bulk ${L.t.toLowerCase()} · ${succeeded}/${phones.length}`, 'ok');
+  toast(`${succeeded}/${phones.length} node(s) processed`, 'ok', 'Bulk');
+  state.selected.clear();
+  await loadAll();
+}
+async function batchUpdate(phones, payload, label) {
+  const succeeded = await runBatchProgress(phones, phone => putStatus(phone, payload), label);
+  logActivity(`${label} · ${succeeded}/${phones.length}`, 'ok');
+  toast(`${succeeded}/${phones.length} node(s) processed`, 'ok', label);
+  await loadAll();
+}
+function runBatchProgress(phones, fn, title) {
+  return new Promise(resolve => {
+    let done = 0, failed = 0;
+    $('modal-box').innerHTML = `
+      <div class="text-center">
+        <p class="text-[10px] font-extrabold uppercase tracking-[.18em]" style="color:var(--muted-2)">Processing</p>
+        <h3 class="font-extrabold tracking-tight text-xl mt-1" style="color:var(--ink)">${esc(title)}</h3>
+        <div class="relative my-6 grid place-items-center">
+          <div class="progress-ring" id="progress-ring" style="--prog:0"><div class="progress-inner"><span class="text-2xl font-extrabold mono" id="progress-pct" style="color:var(--ink)">0%</span></div></div>
+        </div>
+        <p class="text-sm font-bold" style="color:var(--muted)"><span id="progress-done" class="mono">0</span> of <span class="mono">${phones.length}</span></p>
+      </div>`;
+    $('modal-backdrop').classList.add('show');
+    const updateProgress = () => {
+      const pct = Math.round(((done + failed) / phones.length) * 100);
+      $('progress-ring')?.style.setProperty('--prog', pct);
+      $('progress-pct') && ($('progress-pct').textContent = pct + '%');
+      $('progress-done') && ($('progress-done').textContent = done + (failed ? ` (+${failed} failed)` : ''));
+    };
+    Promise.allSettled(phones.map(async phone => {
+      try { await fn(phone); done++; } catch (_) { failed++; }
+      updateProgress();
+    })).then(() => {
+      setTimeout(() => { $('modal-backdrop').classList.remove('show'); resolve(done); }, 400);
+    });
+  });
+}
+
+/* ============================================================
+   DRAWER
+   ============================================================ */
+function uidOf(phone) { const u = state.users.find(x => x.phone === phone); return u ? u.uid : 0; }
+function openDrawer(phone) {
+  const u = state.users.find(x => x.phone === phone);
+  if (!u) return;
+  const st = getStatus(phone);
+  const s = state.statuses[phone] || {};
+  const days = st.days;
+  const expiry = days != null && days > 0 ? fmtDate(Date.now() + days * 86400000) : '—';
+  const p = esc(phone);
+  const pct = days != null ? Math.min(100, Math.round((days / 365) * 100)) : 0;
+  const note = state.notes[phone] || '';
+  const snoozed = isSnoozed(phone);
+  const score = priorityScore(phone);
+  const regAt = getRegisteredAt(u);
+
+  $('drawer-content').innerHTML = `
+    <div class="sticky top-0 z-10 px-6 py-5 border-b flex items-center justify-between" style="border-color:var(--line);background:var(--card)">
+      <div>
+        <p class="text-[10px] font-extrabold uppercase tracking-[.16em]" style="color:var(--muted-2)">Node detail</p>
+        <h3 class="font-extrabold tracking-tight text-lg" style="color:var(--ink)">Control panel</h3>
+      </div>
+      <button class="icon-btn" onclick="closeDrawer()">✕</button>
+    </div>
+    <div class="p-6">
+      <div class="flex items-center gap-4 mb-6">
+        <div class="avatar ${st.key === 'suspended' ? 'susp' : st.key === 'expired' ? 'exp' : st.key === 'unknown' ? 'unk' : st.key === 'critical' ? 'crit' : ''}"
+             style="width:66px;height:66px;flex:0 0 66px;border-radius:22px;font-size:1.15rem">${esc(initials(phone))}</div>
+        <div class="min-w-0 flex-1">
+          <p class="font-extrabold text-lg mono break-all leading-tight" style="color:var(--ink)">${esc(phone)}</p>
+          <div class="mt-2 flex items-center gap-2 flex-wrap">
+            <span class="pill ${st.cls}"><span class="dot"></span>${esc(st.label)}</span>
+            ${st.key === 'critical' ? `<span class="pill crit" style="animation:blink 1.6s ease-in-out infinite"><span class="dot"></span>Alert</span>` : ''}
+            ${snoozed ? `<span class="pill unk">🔕 Snoozed</span>` : ''}
+            <button class="chip !py-1 !px-2.5 !text-[10px]" onclick="copyPhone('${p}')">⧉ Copy</button>
+          </div>
+        </div>
+      </div>
+
+      ${st.key === 'critical' && !snoozed ? `
+      <div class="rounded-2xl p-4 mb-4 flex items-start gap-3"
+           style="background:linear-gradient(135deg,rgba(220,38,38,.1),rgba(244,63,94,.08));border:1.5px solid rgba(220,38,38,.25)">
+        <span style="font-size:1.4rem">🚨</span>
+        <div>
+          <p class="text-[11px] font-extrabold uppercase tracking-[.14em]" style="color:#B91C1C">Mobile alert active</p>
+          <p class="text-[13px] font-bold mt-1" style="color:#7F1D1D">In the last ${ALERT_DAYS} days. Device showing in-app alerts.</p>
+          <button class="btn btn-ghost mt-2.5 !py-1.5 !text-[10px]" onclick="snoozeNode('${p}')">🔕 Snooze 24h</button>
+        </div>
+      </div>` : ''}
+
+      ${snoozed ? `
+      <div class="rounded-2xl p-4 mb-4 flex items-start gap-3"
+           style="background:rgba(100,116,139,.08);border:1.5px solid rgba(100,116,139,.25)">
+        <span style="font-size:1.4rem">🔕</span>
+        <div class="flex-1">
+          <p class="text-[11px] font-extrabold uppercase tracking-[.14em]" style="color:var(--muted)">Snoozed</p>
+          <p class="text-[13px] font-bold mt-1" style="color:var(--ink-3)">Expires ${new Date(state.snoozes[phone]).toLocaleString()}</p>
+        </div>
+        <button class="btn btn-ghost !py-1.5 !text-[10px]" onclick="unsnoozeNode('${p}')">Un-snooze</button>
+      </div>` : ''}
+
+      ${days != null && st.key !== 'suspended' && st.key !== 'expired' ? `
+      <div class="rounded-2xl p-4 mb-5 flex items-center gap-4"
+           style="background:linear-gradient(135deg,rgba(99,102,241,.06),rgba(139,92,246,.08));border:1px solid var(--line)">
+        <div class="ring" style="--p:${pct};--c:${st.color};width:60px;height:60px;flex:0 0 60px"><span style="font-size:.78rem">${days}d</span></div>
+        <div class="flex-1">
+          <p class="text-[10px] font-extrabold uppercase tracking-[.14em]" style="color:var(--muted-2)">License remaining</p>
+          <p class="text-2xl font-extrabold mono mt-0.5" style="color:${st.color}">${days} day${days===1?'':'s'}</p>
+          <p class="text-[11px] font-bold mt-1" style="color:var(--muted-2)">Expires ${expiry}</p>
+        </div>
+        <div class="text-right">
+          <p class="text-[10px] font-extrabold uppercase tracking-[.14em]" style="color:var(--muted-2)">Priority</p>
+          <p class="text-xl font-extrabold mono" style="color:var(--p-600)">${score}</p>
+        </div>
+      </div>` : ''}
+
+      <div class="rounded-2xl p-4 mb-6"
+           style="background:linear-gradient(135deg,rgba(99,102,241,.06),rgba(139,92,246,.08));border:1px solid rgba(99,102,241,.22)">
+        <div class="flex items-center justify-between mb-3">
+          <p class="text-[10px] font-extrabold uppercase tracking-[.14em]" style="color:var(--p-700)">⚡ Quick add days</p>
+          <span class="text-[10px] font-bold mono" style="color:var(--muted-2)">1 tap = instant</span>
+        </div>
+        ${quickAddRow(phone, 'lg')}
+        <p class="text-[11px] font-bold mt-3" style="color:var(--muted-2)">
+          Add small increments (2d, 5d…) without touching the plan dropdown. Works on expired &amp; suspended nodes (auto-reactivates).
+        </p>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3 mb-6">
+        <div class="rounded-2xl p-4" style="background:var(--p-50);border:1px solid var(--line)">
+          <p class="text-[10px] font-extrabold uppercase tracking-[.12em]" style="color:var(--muted-2)">Days remaining</p>
+          <p class="text-2xl font-extrabold mono mt-1" style="color:var(--ink)">${days != null ? days : '—'}</p>
+        </div>
+        <div class="rounded-2xl p-4" style="background:var(--p-50);border:1px solid var(--line)">
+          <p class="text-[10px] font-extrabold uppercase tracking-[.12em]" style="color:var(--muted-2)">Est. expiry</p>
+          <p class="text-sm font-extrabold mt-1.5" style="color:var(--ink)">${expiry}</p>
+        </div>
+        <div class="rounded-2xl p-4" style="background:var(--p-50);border:1px solid var(--line)">
+          <p class="text-[10px] font-extrabold uppercase tracking-[.12em]" style="color:var(--muted-2)">Registered</p>
+          <p class="text-sm font-extrabold mt-1.5" style="color:var(--ink)">${regAt ? timeAgo(regAt) : '—'}</p>
+          ${regAt ? `<p class="text-[10px] mono mt-0.5" style="color:var(--muted-2)">${fmtDate(regAt)}</p>` : ''}
+        </div>
+        <div class="rounded-2xl p-4" style="background:var(--p-50);border:1px solid var(--line)">
+          <p class="text-[10px] font-extrabold uppercase tracking-[.12em]" style="color:var(--muted-2)">Status</p>
+          <p class="text-sm font-extrabold mt-1.5" style="color:${st.color}">${esc(st.label)}</p>
+        </div>
+      </div>
+
+      <div class="rounded-2xl p-4 mb-6" style="background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.25)">
+        <p class="text-[10px] font-extrabold uppercase tracking-[.14em] mb-2" style="color:#B45309">📝 Note</p>
+        <textarea id="node-note" rows="2" placeholder="Add a note…"
+          class="w-full rounded-xl px-3.5 py-2.5 text-[12px] font-bold outline-none resize-none"
+          style="background:var(--card);border:2px solid var(--line-2);color:var(--ink)">${esc(note)}</textarea>
+        <div class="flex gap-2 mt-2">
+          <button class="btn btn-ghost flex-1 !py-2 !text-[11px]" onclick="saveNote('${p}')">💾 Save note</button>
+          ${note ? `<button class="btn btn-ghost !py-2 !text-[11px]" onclick="saveNote('${p}', true)">🗑 Clear</button>` : ''}
+        </div>
+      </div>
+
+      <div class="rounded-2xl p-4 mb-6" style="background:linear-gradient(135deg,rgba(99,102,241,.05),rgba(139,92,246,.07));border:1px solid var(--line)">
+        <p class="text-[10px] font-extrabold uppercase tracking-[.14em] mb-3" style="color:var(--muted-2)">Activate with plan</p>
+        <div class="flex gap-2">
+          <div class="relative flex-1">
+            <select id="drawer-plan" class="w-full appearance-none rounded-xl px-3.5 py-2.5 text-[11px] font-extrabold outline-none cursor-pointer"
+              style="background:var(--card);border:2px solid var(--line-2);color:var(--ink-3)">
+              <option value="7">⚡ 7 days</option>
+              <option value="30" selected>📅 30 days</option>
+              <option value="90">📆 90 days</option>
+              <option value="365">🎯 365 days</option>
+            </select>
+            <span class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[10px]" style="color:var(--muted-2)">▼</span>
+          </div>
+          <button class="btn btn-royal" onclick="drawerExtend('${p}')">＋ Activate</button>
+        </div>
+      </div>
+
+      <p class="text-[10px] font-extrabold uppercase tracking-[.14em] mb-3" style="color:var(--muted-2)">More actions</p>
+      <div class="grid grid-cols-2 gap-2.5">
+        <button class="btn btn-dark" onclick="authorizeUser('${p}'); closeDrawer();">✓ Authorize</button>
+        <button class="btn btn-warn" onclick="suspendUser('${p}'); closeDrawer();">⛔ Suspend</button>
+        <button class="btn btn-ghost" onclick="deactivateUser('${p}')">◌ Deactivate</button>
+        <button class="btn btn-danger" onclick="deleteUser('${p}')">🗑 Delete node</button>
+      </div>
+    </div>`;
+
+  $('drawer').classList.add('open');
+  $('drawer-backdrop').classList.add('show');
+}
+function closeDrawer() {
+  $('drawer').classList.remove('open');
+  $('drawer-backdrop').classList.remove('show');
+}
+async function drawerExtend(phone) {
+  const days = parseInt($('drawer-plan').value);
+  const ok = await optimisticUpdate(phone, { isPaid:true, isSuspended:false, daysToAdd:days }, { label:`+${days}d` });
+  if (ok) {
+    toast(`${phone} +${days} days`, 'ok', 'Node updated', { label:'Undo', action: () => revertLastAction() });
+    await loadAll(); openDrawer(phone);
+  }
+}
+async function deactivateUser(phone) {
+  const ok = await confirmDialog({ title:'Deactivate license?', message:`${phone} will be marked expired.`, confirmText:'Deactivate', danger:true });
+  if (!ok) return;
+  const done = await optimisticUpdate(phone, { isPaid:false, isSuspended:false, daysToAdd:0 }, { label:'Deactivated', color:'warn' });
+  if (done) { toast(`${phone} deactivated`, 'warn', 'License removed', { label:'Undo', action: () => revertLastAction() }); await loadAll(); openDrawer(phone); }
+}
+function saveNote(phone, clear) {
+  const el = $('node-note');
+  if (clear || !el.value.trim()) delete state.notes[phone];
+  else state.notes[phone] = el.value.trim();
+  saveJSON(NOTES_KEY, state.notes);
+  toast(clear ? 'Note cleared' : 'Note saved', 'ok', 'Notes');
+  renderUsers(); renderKanban(); openDrawer(phone);
+}
+function snoozeNode(phone) {
+  state.snoozes[phone] = Date.now() + 86400000;
+  saveJSON(SNOOZE_KEY, state.snoozes);
+  toast(`${phone} snoozed 24h`, 'warn', 'Alerts muted');
+  renderAll(); openDrawer(phone);
+}
+function unsnoozeNode(phone) {
+  delete state.snoozes[phone];
+  saveJSON(SNOOZE_KEY, state.snoozes);
+  toast('Snooze removed', 'info', 'Alerts restored');
+  renderAll(); openDrawer(phone);
+}
+function copyPhone(phone) {
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(phone).then(
+      () => toast('Phone number copied', 'ok', 'Clipboard'),
+      () => toast('Copy failed', 'bad', 'Clipboard')
+    );
+  }
+}
+
+/* ============================================================
+   BULK IMPORT
+   ============================================================ */
+function openImportModal() {
+  $('modal-box').innerHTML = `
+    <div class="flex items-start gap-4 mb-5">
+      <div class="w-12 h-12 rounded-2xl grid place-items-center text-xl shrink-0" style="background:var(--p-50);color:var(--p-600)">📥</div>
+      <div class="min-w-0">
+        <h3 class="font-extrabold tracking-tight text-lg leading-tight" style="color:var(--ink)">Bulk import nodes</h3>
+        <p class="text-sm font-semibold mt-1" style="color:var(--muted)">One per line. Optional: <code class="mono text-[11px]">phone,days</code></p>
+      </div>
+    </div>
+    <textarea id="import-text" rows="8" placeholder="+1234567890&#10;+1234567891,30&#10;+1234567892,365" class="w-full rounded-2xl px-4 py-3 text-[13px] font-bold outline-none resize-none mono" style="background:var(--p-50);border:2px solid var(--line-2);color:var(--ink)"></textarea>
+    <div class="mt-3 flex items-center gap-2">
+      <span class="text-[11px] font-bold" style="color:var(--muted-2)">Default plan:</span>
+      <select id="import-plan" class="rounded-xl px-3 py-2 text-[11px] font-extrabold outline-none" style="background:var(--p-50);border:2px solid var(--line-2);color:var(--ink-3)">
+        <option value="7">7 days</option>
+        <option value="30" selected>30 days</option>
+        <option value="90">90 days</option>
+        <option value="365">365 days</option>
+      </select>
+      <span class="text-[11px] font-bold ml-auto" style="color:var(--muted-2)"><span id="import-count">0</span> lines</span>
+    </div>
+    <div class="flex gap-2.5 mt-5">
+      <button class="btn btn-ghost flex-1 !py-3" onclick="$('modal-backdrop').classList.remove('show')">Cancel</button>
+      <button class="btn btn-royal flex-1 !py-3" onclick="runBulkImport()">Import &amp; authorize</button>
+    </div>`;
+  $('modal-backdrop').classList.add('show');
+  setTimeout(() => {
+    const t = $('import-text'); if (t) { t.focus(); t.addEventListener('input', () => {
+      const n = t.value.split(/\r?\n/).map(l => l.trim()).filter(Boolean).length;
+      $('import-count').textContent = n;
+    }); }
+  }, 100);
+}
+async function runBulkImport() {
+  const raw = $('import-text').value;
+  const defaultPlan = parseInt($('import-plan').value);
+  const lines = raw.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+  if (!lines.length) { toast('No lines to import', 'warn', 'Empty input'); return; }
+  const tasks = [];
+  lines.forEach(line => {
+    const [phoneRaw, daysRaw] = line.split(',').map(s => s.trim());
+    const phone = phoneRaw.replace(/[^\d+]/g, '');
+    if (!phone || phone.length < 6) return;
+    const days = daysRaw ? parseInt(daysRaw) : defaultPlan;
+    tasks.push({ phone, days: isNaN(days) ? defaultPlan : days });
+  });
+  if (!tasks.length) { toast('No valid phone numbers', 'warn', 'Invalid input'); return; }
+  $('modal-backdrop').classList.remove('show');
+  const succeeded = await runBatchProgress(tasks, t => putStatus(t.phone, { isPaid:true, isSuspended:false, daysToAdd:t.days }), `Importing ${tasks.length} node(s)`);
+  logActivity(`Bulk import · ${succeeded}/${tasks.length}`, 'ok');
+  toast(`${succeeded}/${tasks.length} imported`, 'ok', 'Import complete');
+  await loadAll();
+}
+
+/* ============================================================
+   MODAL / CONFIRM
+   ============================================================ */
+let modalResolve = null;
+function confirmDialog({ title, message, confirmText = 'Confirm', danger = false }) {
+  return new Promise(resolve => {
+    modalResolve = resolve;
+    $('modal-box').innerHTML = `
+      <div class="flex items-start gap-4 mb-5">
+        <div class="w-12 h-12 rounded-2xl grid place-items-center text-xl shrink-0"
+             style="background:${danger ? '#FFF1F3' : '#EEF3FF'};color:${danger ? '#E11D48' : 'var(--p-600)'}">${danger ? '⚠' : '?'}</div>
+        <div class="min-w-0">
+          <h3 class="font-extrabold tracking-tight text-lg leading-tight" style="color:var(--ink)">${esc(title)}</h3>
+          <p class="text-sm font-semibold mt-2 leading-relaxed" style="color:var(--muted)">${esc(message)}</p>
+        </div>
+      </div>
+      <div class="flex gap-2.5">
+        <button class="btn btn-ghost flex-1 !py-3" onclick="resolveModal(false)">Cancel</button>
+        <button class="btn ${danger ? 'btn-danger' : 'btn-royal'} flex-1 !py-3" onclick="resolveModal(true)">${esc(confirmText)}</button>
+      </div>`;
+    $('modal-backdrop').classList.add('show');
+  });
+}
+function resolveModal(val) {
+  $('modal-backdrop').classList.remove('show');
+  if (modalResolve) { modalResolve(val); modalResolve = null; }
+}
+$('modal-backdrop').addEventListener('click', e => { if (e.target === $('modal-backdrop')) resolveModal(false); });
+
+/* ============================================================
+   TOASTS
+   ============================================================ */
+function toast(message, type = 'info', title = '', opts = {}) {
+  const colors = { ok:'#10B981', warn:'#F59E0B', bad:'#F43F5E', info:'#6366F1' };
+  const icons = { ok:'✓', warn:'⚠', bad:'✕', info:'ℹ' };
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.style.setProperty('--t', colors[type] || colors.info);
+  el.innerHTML = `
+    <div class="bar"></div>
+    <div class="w-7 h-7 rounded-xl grid place-items-center text-[13px] shrink-0" style="background:${colors[type]}18;color:${colors[type]}">${icons[type]}</div>
+    <div class="min-w-0 flex-1">
+      ${title ? `<p class="text-[10px] font-extrabold uppercase tracking-[.14em]" style="color:${colors[type]}">${esc(title)}</p>` : ''}
+      <p class="text-[13px] font-bold leading-snug mt-0.5" style="color:var(--ink-3)">${esc(message)}</p>
+    </div>
+    ${opts.label ? `<button class="undo-btn">${esc(opts.label)}</button>` : ''}`;
+  if (opts.label && opts.action) {
+    el.querySelector('.undo-btn').addEventListener('click', () => { opts.action(); el.classList.add('out'); setTimeout(() => el.remove(), 320); });
+  }
+  $('toasts').appendChild(el);
+  const delay = opts.label ? 6000 : 3600;
+  setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 320); }, delay);
+}
+
+/* ============================================================
+   ACTIVITY
+   ============================================================ */
+function logActivity(text, type = 'info') {
+  state.activity.unshift({ text, type, time: new Date() });
+  state.activity = state.activity.slice(0, 100);
+  renderActivity();
+}
+function renderActivity() {
+  const el = $('activity-list'); if (!el) return;
+  if (!state.activity.length) {
+    el.innerHTML = `
+      <div class="text-center py-14">
+        <div class="w-16 h-16 rounded-3xl mx-auto grid place-items-center text-2xl mb-4" style="background:var(--p-50)">🕓</div>
+        <p class="font-extrabold" style="color:var(--ink-3)">No activity yet</p>
+        <p class="text-sm font-semibold mt-1.5" style="color:var(--muted-2)">Actions you perform will appear here.</p>
+      </div>`;
+    return;
+  }
+  const colors = { ok:'#10B981', warn:'#F59E0B', bad:'#F43F5E', info:'#6366F1' };
+  el.innerHTML = state.activity.map(a => `
+    <div class="flex items-center gap-3.5 p-3.5 rounded-2xl transition" style="border:1px solid var(--line)">
+      <div class="w-2.5 h-2.5 rounded-full shrink-0" style="background:${colors[a.type] || colors.info}"></div>
+      <p class="flex-1 text-[13px] font-bold min-w-0 truncate" style="color:var(--ink-3)">${esc(a.text)}</p>
+      <span class="text-[11px] font-bold mono shrink-0" style="color:var(--muted-2)">${a.time.toLocaleTimeString([], { hour:'2-digit', minute:'2-digit', second:'2-digit' })}</span>
+    </div>`).join('');
+}
+function clearActivity() { state.activity = []; renderActivity(); }
+function exportActivity() {
+  const txt = state.activity.map(a => `[${a.time.toISOString()}] (${a.type}) ${a.text}`).join('\n') || 'No activity';
+  download(`activity-${Date.now()}.txt`, txt, 'text/plain');
+}
+
+/* ============================================================
+   EXPORT
+   ============================================================ */
+function download(filename, content, type) {
+  const blob = new Blob([content], { type });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  toast(`Downloaded ${filename}`, 'ok', 'Export ready');
+}
+function exportData(fmt) {
+  const list = visibleUsers();
+  if (!list.length) { toast('Nothing to export', 'warn', 'Empty selection'); return; }
+  if (fmt === 'json') {
+    const payload = list.map(u => {
+      const st = getStatus(u.phone);
+      const s = state.statuses[u.phone] || {};
+      return { phone:u.phone, status:st.key, daysRemaining:st.days, priority:priorityScore(u.phone),
+        registeredAt: getRegisteredAt(u),
+        isPaid:!!s.isPaid, isSuspended:!!s.isSuspended, note: state.notes[u.phone] || '', snoozed:isSnoozed(u.phone) };
+    });
+    download(`nodes-${Date.now()}.json`, JSON.stringify(payload, null, 2), 'application/json');
+  } else {
+    const header = 'phone,status,daysRemaining,priority,registeredAt,expiry,isPaid,isSuspended,note';
+    const rows = list.map(u => {
+      const st = getStatus(u.phone);
+      const s = state.statuses[u.phone] || {};
+      const exp = st.days != null && st.days > 0 ? new Date(Date.now() + st.days * 86400000).toISOString().slice(0,10) : '';
+      const reg = getRegisteredAt(u);
+      const regStr = reg ? new Date(reg).toISOString() : '';
+      const note = (state.notes[u.phone] || '').replace(/"/g,'""');
+      return `${u.phone},${st.key},${st.days ?? ''},${priorityScore(u.phone)},${regStr},${exp},${s.isPaid ? 1 : 0},${s.isSuspended ? 1 : 0},"${note}"`;
+    });
+    download(`nodes-${Date.now()}.csv`, [header, ...rows].join('\n'), 'text/csv');
+  }
+}
+
+/* ============================================================
+   NOTIFICATIONS
+   ============================================================ */
+function computeNotifications() {
+  const list = [];
+  state.users.forEach(u => {
+    const st = getStatus(u.phone);
+    if (st.key === 'critical' && !isSnoozed(u.phone)) {
+      list.push({ type:'bad', phone:u.phone, text:`${u.phone} expires in ${st.days}d · mobile alert active` });
+    }
+  });
+  return list.slice(0, 30);
+}
+function updateNotifications() {
+  const list = computeNotifications();
+  const badge = $('notif-badge');
+  if (badge) { if (list.length) { badge.textContent = list.length; badge.classList.remove('hidden'); } else badge.classList.add('hidden'); }
+  const el = $('notif-list'); if (!el) return;
+  if (!list.length) {
+    el.innerHTML = `
+      <div class="text-center py-10">
+        <div class="w-14 h-14 rounded-2xl mx-auto grid place-items-center text-2xl mb-3" style="background:var(--ok-soft)">✅</div>
+        <p class="font-extrabold text-sm" style="color:var(--ink)">All caught up</p>
+        <p class="text-xs font-semibold mt-1" style="color:var(--muted-2)">No alerts at this time</p>
+      </div>`;
+    return;
+  }
+  const colors = { bad:'#DC2626', warn:'#F59E0B', info:'#6366F1' };
+  el.innerHTML = list.map(n => `
+    <button onclick="closeNotifications(); openDrawer('${esc(n.phone)}')" class="w-full text-left flex items-start gap-3 p-3 rounded-xl transition"
+            style="background:rgba(220,38,38,.06);border:1px solid rgba(220,38,38,.2)">
+      <span class="w-2 h-2 rounded-full mt-1.5 shrink-0" style="background:${colors[n.type]}"></span>
+      <div class="min-w-0 flex-1">
+        <p class="text-[12px] font-bold leading-snug" style="color:var(--ink-3)">${esc(n.text)}</p>
+        <p class="text-[10px] font-extrabold uppercase tracking-[.14em] mt-1" style="color:${colors[n.type]}">Tap to manage</p>
+      </div>
+    </button>`).join('');
+}
+function openNotifications() { updateNotifications(); $('notif-drop').classList.add('show'); }
+function closeNotifications() { $('notif-drop').classList.remove('show'); }
+document.addEventListener('click', e => {
+  const drop = $('notif-drop'), btn = $('notif-btn');
+  if (!drop || !btn) return;
+  if (!drop.classList.contains('show')) return;
+  if (!drop.contains(e.target) && !btn.contains(e.target)) closeNotifications();
+});
+
+/* ============================================================
+   VIEW SWITCHING
+   ============================================================ */
+const VIEW_META = {
+  dashboard:{ title:'Dashboard', sub:'System health, 5-day alerts & fleet overview' },
+  users:{ title:'Node Control', sub:'Manage, authorize and monitor every node' },
+  kanban:{ title:'Kanban Board', sub:'Visual fleet grouped by status' },
+  calendar:{ title:'Calendar', sub:'Nodes expiring each day of the month' },
+  activity:{ title:'Activity Log', sub:'Actions performed in this session' }
+};
+function switchView(view) {
+  Object.keys(VIEW_META).forEach(v => {
+    const el = $(`view-${v}`); if (el) el.classList.toggle('hidden', v !== view);
+    const nav = $(`nav-${v}`); if (nav) nav.classList.toggle('active', v === view);
+  });
+  const m = VIEW_META[view];
+  if (m) { $('page-title').textContent = m.title; $('page-sub').textContent = m.sub; }
+  const el = $('view-' + view);
+  if (el) { el.classList.remove('fade-in'); void el.offsetWidth; el.classList.add('fade-in'); }
+  toggleSidebar(false);
+}
+function toggleSidebar(open) {
+  $('sidebar').classList.toggle('open', open);
+  $('sidebar-scrim').classList.toggle('show', open);
+}
+
+/* ============================================================
+   COMMAND PALETTE
+   ============================================================ */
+const COMMANDS = [
+  { id:'goto-dashboard', label:'Go to Dashboard', hint:'View', ic:'◈', action:() => switchView('dashboard') },
+  { id:'goto-users', label:'Go to Node Control', hint:'View', ic:'☰', action:() => switchView('users') },
+  { id:'goto-kanban', label:'Go to Kanban Board', hint:'View', ic:'▤', action:() => switchView('kanban') },
+  { id:'goto-calendar', label:'Go to Calendar', hint:'View', ic:'▦', action:() => switchView('calendar') },
+  { id:'goto-activity', label:'Go to Activity Log', hint:'View', ic:'↻', action:() => switchView('activity') },
+  { id:'refresh', label:'Refresh data now', hint:'Action', ic:'⟳', action:() => loadAll(true) },
+  { id:'sort-newest', label:'Sort by registration date (newest)', hint:'Sort', ic:'📅', action:() => { state.sort = 'newest'; const s = $('sort'); if (s) s.value='newest'; switchView('users'); renderUsers(); } },
+  { id:'sort-oldest', label:'Sort by registration date (oldest)', hint:'Sort', ic:'📅', action:() => { state.sort = 'oldest'; const s = $('sort'); if (s) s.value='oldest'; switchView('users'); renderUsers(); } },
+  { id:'bulk-add-1', label:'Bulk add +1 day to selected', hint:'Action', ic:'＋', action:() => bulkAddDays(1) },
+  { id:'bulk-add-2', label:'Bulk add +2 days to selected', hint:'Action', ic:'＋', action:() => bulkAddDays(2) },
+  { id:'bulk-add-5', label:'Bulk add +5 days to selected', hint:'Action', ic:'＋', action:() => bulkAddDays(5) },
+  { id:'bulk-add-7', label:'Bulk add +7 days to selected', hint:'Action', ic:'＋', action:() => bulkAddDays(7) },
+  { id:'bulk-add-custom', label:'Bulk add custom days…', hint:'Action', ic:'＋', action:() => bulkAddDaysCustom() },
+  { id:'preset-alerts', label:'Filter: Alert ≤5 days', hint:'Filter', ic:'🚨', action:() => quickPreset('alerts') },
+  { id:'preset-expiring', label:'Filter: Expiring ≤30 days', hint:'Filter', ic:'⏳', action:() => quickPreset('expiring') },
+  { id:'reset-filters', label:'Reset all filters', hint:'Filter', ic:'↻', action:() => resetFilters() },
+  { id:'export-csv', label:'Export nodes as CSV', hint:'Export', ic:'⬇', action:() => exportData('csv') },
+  { id:'export-json', label:'Export nodes as JSON', hint:'Export', ic:'⬇', action:() => exportData('json') },
+  { id:'export-alerts', label:'Export alert list', hint:'Export', ic:'🚨', action:() => exportAlertNodes() },
+  { id:'export-dom', label:'Export day-of-month stats', hint:'Export', ic:'📅', action:() => exportCalendar() },
+  { id:'import', label:'Bulk import nodes', hint:'Action', ic:'📥', action:() => openImportModal() },
+  { id:'renew-all', label:'Renew all alerting +30d', hint:'Action', ic:'✓', action:() => renewAllAlerts() },
+  { id:'theme', label:'Toggle dark / light mode', hint:'Preference', ic:'🌙', action:() => { const d = document.documentElement.getAttribute('data-theme') !== 'dark'; toggleTheme(d); const t = $('theme-toggle'); if (t) t.checked = d; } },
+  { id:'density', label:'Toggle compact density', hint:'Preference', ic:'🧊', action:() => { const c = document.documentElement.getAttribute('data-density') !== 'compact'; toggleDensity(c); const d = $('density-toggle'); if (d) d.checked = c; } },
+  { id:'shortcuts', label:'View keyboard shortcuts', hint:'Help', ic:'⌘', action:() => openShortcuts() },
+  { id:'logout', label:'Sign out', hint:'Session', ic:'⏻', action:() => handleLogout() }
+];
+function openCmdPalette() {
+  state.cmdIndex = 0;
+  state.cmdFiltered = COMMANDS.slice();
+  $('cmd-backdrop').classList.add('show');
+  $('cmd-input').value = '';
+  renderCmdList();
+  setTimeout(() => $('cmd-input').focus(), 80);
+}
+function closeCmdPalette() { $('cmd-backdrop').classList.remove('show'); }
+function fuzzyScore(str, q) {
+  str = str.toLowerCase(); q = q.toLowerCase();
+  if (!q) return 1;
+  let score = 0, si = 0, prevIdx = -1;
+  for (let i = 0; i < q.length; i++) {
+    const found = str.indexOf(q[i], si);
+    if (found === -1) return 0;
+    score += (found === prevIdx + 1) ? 3 : 1;
+    prevIdx = found; si = found + 1;
+  }
+  return score + (str.startsWith(q) ? 5 : 0);
+}
+function renderCmdList() {
+  const q = $('cmd-input').value;
+  if (q) {
+    state.cmdFiltered = COMMANDS
+      .map(c => ({ c, s: fuzzyScore(c.label, q) + fuzzyScore(c.hint, q) * 0.3 }))
+      .filter(x => x.s > 0).sort((a,b) => b.s - a.s).map(x => x.c);
+  } else state.cmdFiltered = COMMANDS.slice();
+  if (state.cmdIndex >= state.cmdFiltered.length) state.cmdIndex = 0;
+  const el = $('cmd-list');
+  if (!state.cmdFiltered.length) {
+    el.innerHTML = `<div class="text-center py-10 text-sm font-bold" style="color:var(--muted-2)">No commands match</div>`;
+    return;
+  }
+  el.innerHTML = state.cmdFiltered.map((c, i) => `
+    <div class="cmd-item ${i === state.cmdIndex ? 'sel' : ''}" data-idx="${i}" onclick="runCmd(${i})">
+      <span class="cmd-ic">${c.ic}</span>
+      <span class="cmd-label">${esc(c.label)}</span>
+      <span class="cmd-hint">${esc(c.hint)}</span>
+    </div>`).join('');
+  const sel = el.querySelector('.sel'); if (sel) sel.scrollIntoView({ block:'nearest' });
+}
+function runCmd(i) {
+  const c = state.cmdFiltered[i];
+  if (!c) return;
+  closeCmdPalette();
+  setTimeout(() => c.action(), 120);
+}
+$('cmd-input').addEventListener('input', () => { state.cmdIndex = 0; renderCmdList(); });
+$('cmd-input').addEventListener('keydown', e => {
+  if (e.key === 'ArrowDown') { e.preventDefault(); state.cmdIndex = Math.min(state.cmdIndex + 1, state.cmdFiltered.length - 1); renderCmdList(); }
+  else if (e.key === 'ArrowUp') { e.preventDefault(); state.cmdIndex = Math.max(state.cmdIndex - 1, 0); renderCmdList(); }
+  else if (e.key === 'Enter') { e.preventDefault(); runCmd(state.cmdIndex); }
+});
+
+/* ============================================================
+   SHORTCUTS
+   ============================================================ */
+function openShortcuts() {
+  $('modal-box').innerHTML = `
+    <div class="flex items-start gap-4 mb-5">
+      <div class="w-12 h-12 rounded-2xl grid place-items-center text-xl shrink-0" style="background:var(--p-50);color:var(--p-600)">⌘</div>
+      <div class="min-w-0">
+        <h3 class="font-extrabold tracking-tight text-lg leading-tight" style="color:var(--ink)">Keyboard shortcuts</h3>
+        <p class="text-sm font-semibold mt-1" style="color:var(--muted)">Boost your workflow</p>
+      </div>
+    </div>
+    <div class="space-y-2.5">
+      ${[
+        ['Command palette','⌘K / Ctrl+K'],
+        ['Focus search','/'],
+        ['Refresh data','R'],
+        ['Reset filters','Shift + R'],
+        ['Close drawer / modal','Esc'],
+        ['Go to Dashboard','G then D'],
+        ['Go to Node Control','G then U'],
+        ['Go to Kanban','G then K'],
+        ['Go to Calendar','G then C'],
+        ['Toggle dark mode','Shift + D']
+      ].map(([label, k]) => `
+        <div class="flex items-center justify-between p-3 rounded-xl" style="background:var(--p-50);border:1px solid var(--line)">
+          <span class="text-[13px] font-bold" style="color:var(--ink-3)">${label}</span>
+          <kbd>${k}</kbd>
+        </div>`).join('')}
+    </div>
+    <button class="btn btn-royal w-full mt-6 !py-3" onclick="$('modal-backdrop').classList.remove('show')">Got it</button>`;
+  $('modal-backdrop').classList.add('show');
+}
+
+/* ============================================================
+   RANGE TOGGLES
+   ============================================================ */
+document.querySelectorAll('#timeline-range button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('#timeline-range button').forEach(b => b.classList.remove('on'));
+    btn.classList.add('on');
+    state.timelineRange = parseInt(btn.dataset.range);
+    renderTimeline();
+  });
+});
+document.querySelectorAll('#calday-range button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('#calday-range button').forEach(b => b.classList.remove('on'));
+    btn.classList.add('on');
+    state.calendarRange = btn.dataset.range === 'all' ? 'all' : parseInt(btn.dataset.range);
+    renderDayOfMonthChart();
+  });
+});
+
+/* ============================================================
+   KEYBOARD
+   ============================================================ */
+let lastKey = ''; let lastKeyTime = 0;
+document.addEventListener('keydown', e => {
+  const typing = ['INPUT','SELECT','TEXTAREA'].includes(document.activeElement.tagName);
+  const cmdOpen = $('cmd-backdrop').classList.contains('show');
+  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+    e.preventDefault();
+    if (cmdOpen) closeCmdPalette(); else openCmdPalette();
+    return;
+  }
+  if (cmdOpen) { if (e.key === 'Escape') { e.preventDefault(); closeCmdPalette(); } return; }
+  if (e.key === 'Escape') {
+    if ($('modal-backdrop').classList.contains('show')) { resolveModal(false); return; }
+    if ($('drawer').classList.contains('open')) { closeDrawer(); return; }
+    if ($('notif-drop').classList.contains('show')) { closeNotifications(); return; }
+    if ($('sidebar').classList.contains('open')) { toggleSidebar(false); return; }
+    if (typing) document.activeElement.blur();
+    return;
+  }
+  if (typing) return;
+  if (e.key === '/') {
+    e.preventDefault(); switchView('users');
+    setTimeout(() => { const s = $('search'); if (s) s.focus(); }, 80);
+    return;
+  }
+  if (e.key === 'r' || e.key === 'R') { if (e.shiftKey) resetFilters(); else loadAll(true); return; }
+  if (e.shiftKey && (e.key === 'D' || e.key === 'd')) {
+    const dark = document.documentElement.getAttribute('data-theme') !== 'dark';
+    toggleTheme(dark);
+    const t = $('theme-toggle'); if (t) t.checked = dark;
+    return;
+  }
+  const now = Date.now();
+  if (lastKey === 'g' && now - lastKeyTime < 800) {
+    const k = e.key.toLowerCase();
+    if (k === 'd') switchView('dashboard');
+    if (k === 'u') switchView('users');
+    if (k === 'k') switchView('kanban');
+    if (k === 'c') switchView('calendar');
+    if (k === 'a') switchView('activity');
+    lastKey = ''; return;
+  }
+  lastKey = e.key.toLowerCase();
+  lastKeyTime = now;
+});
+
+/* ============================================================
+   COUNTDOWN + AUTO REFRESH
+   ============================================================ */
+function tickCountdown() {
+  const el = $('countdown'); if (!el) return;
+  const remaining = Math.max(0, state.nextRefresh - Date.now());
+  const sec = Math.ceil(remaining / 1000);
+  el.textContent = sec > 0 ? `${sec}s` : 'now';
+}
+setInterval(tickCountdown, 1000);
+setInterval(() => { if (state.token && !document.hidden) loadAll(); }, 60000);
+tickCountdown();
+</script>
+</body>
+</html>
